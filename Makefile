@@ -1,15 +1,35 @@
+# Makefile
+# ##########################################################################
+# CREATED: 2018-09-26
+# UPDATED: 2018-09-27
+# VERSION: 0.1.1
+# AUTHOR:  wlharvey4
+# ABOUT:   makefile for CCI-GsonExample program
+# NOTES:
+# CHANGE-LOG
+# ..........................................................................
+# 2018-09-26 version 0.1.0
+# - initial commit
+# ..........................................................................
+# 2018-09-27 version 0.1.1
+# - adjusted packages;
+# - added code information
+# --------------------------------------------------------------------------
+
 MAIN := Main
 CLASSPATH := .:gson-2.8.5.jar
+PACKAGEA := challenges/test/java
+PACKAGEMAIN := lang/java
 
 .PHONY : default main clean
 
 default : main
 
-main : lang/java/Main.class
+main : $(PACKAGEMAIN)/Main.class
 
-lang/java/Main.class : lang/java/Main.java lang/java/IA.java lang/java/AParams.java lang/java/AExpected.java \
-	chall/enge/java/A.java chall/enge/java/Params.java chall/enge/java/Expected.java
-	javac -classpath $(CLASSPATH) lang/java/Main.java
+lang/java/Main.class : $(PACKAGEMAIN)/Main.java $(PACKAGEMAIN)/IA.java $(PACKAGEMAIN)/AParams.java $(PACKAGEMAIN)/AExpected.java \
+	$(PACKAGEA)/A.java $(PACKAGEA)/Params.java $(PACKAGEA)/Expected.java
+	javac -classpath $(CLASSPATH) $(PACKAGEMAIN)/Main.java
 
 clean :
-	rm -rfv *~ lang/java/*{.class,~} chall/enge/java/*{.class,~}
+	rm -rfv *~ $(PACKAGEMAIN)/*{.class,~} $(PACKAGEA)/*{.class,~}
