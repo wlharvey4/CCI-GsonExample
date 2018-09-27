@@ -1,5 +1,6 @@
 package chall.enge.java;
 import com.google.gson.*;
+import lang.java.*;
 
 public class Expected extends AExpected {
     private static String expected;

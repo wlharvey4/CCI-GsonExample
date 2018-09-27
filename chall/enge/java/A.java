@@ -1,4 +1,6 @@
 package chall.enge.java;
+import chall.enge.java.*;
+import lang.java.*;
 
 public class A implements IA {
     private Params params;

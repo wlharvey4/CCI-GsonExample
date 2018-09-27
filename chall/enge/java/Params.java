@@ -1,5 +1,6 @@
 package chall.enge.java;
 import com.google.gson.*;
+import lang.java.*;
 
 public class Params extends AParams {
     private static int n;

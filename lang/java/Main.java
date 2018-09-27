@@ -2,7 +2,7 @@
    =======================================================
    CREATED: 2018-09-26T12:30
    UDPATED:
-   VERSION: 0.1.1
+   VERSION: 0.1.2
    AUTHOR: wlharvey4
    ABOUT: Example setup for reading in JSON objects of "params" objects of arbitrary construction
           and initializing an A object (i.e., InputExpected) using JSON elements instead of Strings
@@ -14,8 +14,9 @@
      IA.java: main interface
      AParams.java: abstract utility class
      AExpected.java: abstract utility class
-   CLASSPATH: .:<path-to-gson->
-   compilation: javac Main.java
+   BASEDIR: CCI-GsonExample
+   CLASSPATH: .:gson-2.8.5.jar
+   compilation: javac lang/java/Main.java
    usage: ?java Main "{\"params\":{\"n\":1,\"m\":2},\"expected\":3}"
    CHANGE-LOG:
    .......................................................
@@ -24,11 +25,18 @@
    .......................................................
    2018-09-26T18:00 VERSION 0.1.1
    - moved files into packages
+   .......................................................
+   2018-09-26T19:30 VERSION 0.1.2
+   - updated packages and importing;
+   - created Makefile;
+   - program compiles successfully with Makefile; cleans successfully
    -------------------------------------------------------
 */
 
 package lang.java;
 import com.google.gson.*;
+import lang.java.*;
+import chall.enge.java.*;
 
 public class Main {
     /* args[0] := {"params":{"n":1,"m":2},"expected":3}
