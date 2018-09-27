@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-27T08:40
-   VERSION: 0.1.6
+   UDPATED: 2018-09-27T13:40
+   VERSION: 0.1.7
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -50,12 +50,22 @@
    .........................................................................
    2018-09-27T08:40 version 0.1.6
    - added File computations and exceptions
+   .........................................................................
+   2018-09-27T13:40 version 0.1.7
+   - added FileReader;
+   - added package variables;
+   - changed name of class method to ccInit from ccJSON;
+   - added try-with-resource opening of json data file;
+   - added Gson, JsonParser, JsonElement, JsonArray
+   - added catch-blocks of all exceptions
+   - commented out former code in preparation for new code iterating over data
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import com.google.gson.*;
 import challenges.test.java.*;
@@ -75,12 +85,15 @@ public class Main {
 
     private static String cc; 	  // code challenge from command-line
     private static String ccName; // upper-cased code challenge name
+    private static String packageLang = "lang.java."; // package designation for Main
+    private static String packageCC; // package designation based upon cc from command-line
     private static File   ccJSON; // code challenge JSON data file
 
     /* Initialize class variables using code challenge from command line */
-    private static void ccJSON(String cc) throws IOException {
+    private static void ccInit(String cc) throws IOException {
 	Main.cc = cc;
 	Main.ccName = Main.cc.substring(0,1).toUpperCase() + Main.cc.substring(1);
+	Main.packageCC = "challenges." + Main.cc + ".java.";
 
 	Main.ccJSON = new File(new File(new File(Main.ROOT, "challenges"), Main.cc), Main.cc + ".json");
 	if (!(Main.ccJSON.canRead()||Main.ccJSON.exists())) {
@@ -92,32 +105,59 @@ public class Main {
        Example args[0] := {"params":{"n":1,"m":2},"expected":3}
     */
     public static void main(String[] args) {
-	try { Main.ccJSON(args[0]); }
+	try { Main.ccInit(args[0]); }
 	catch (IOException ioe) { ioe.printStackTrace(); System.exit(-1); }
 	catch (NullPointerException | ArrayIndexOutOfBoundsException mce) {
 	    System.err.println("USAGE: $java lang/java/Main <code-challenge>");
 	    mce.printStackTrace();
 	    System.exit(0);
 	}
+
+	try (FileReader fr = new FileReader(Main.ccJSON)) {
+	    System.err.println("Successfully opened " + Main.ccJSON);
 	
-	Gson gson = new Gson();
+	    Gson gson = new Gson();
+	    JsonParser parser = new JsonParser();
+	    JsonElement ccElement = parser.parse(fr);
+	    JsonArray ccJsonArr = ccElement.getAsJsonArray();
+	    
+	}
+	catch (JsonIOException jioe) {
+	    jioe.printStackTrace();
+	    System.exit(-1);
+	}
+	catch (JsonSyntaxException jse) {
+	    jse.printStackTrace();
+	    System.exit(-1);
+	}
+	catch (JsonParseException jpe) {
+	    jpe.printStackTrace();
+	    System.exit(-1);
+	}
+	catch (IllegalStateException ise) {
+	    ise.printStackTrace();
+	    System.exit(-1);
+	}
+	catch (IOException ioe) {
+	    ioe.printStackTrace();
+	    System.exit(-1);
+	}
 
-	JsonParser parser = new JsonParser();
-	JsonElement elements = parser.parse(args[0]);
-	JsonObject paramsExpected = elements.getAsJsonObject();
+	// JsonElement elements = parser.parse(args[0]);
+	// JsonObject paramsExpected = elements.getAsJsonObject();
 
-	JsonElement params = paramsExpected.get("params");
-	JsonElement expected = paramsExpected.get("expected");
+	// JsonElement params = paramsExpected.get("params");
+	// JsonElement expected = paramsExpected.get("expected");
 
-	System.out.println("Params: " + params);
-	System.out.println("Expected: " + expected);
+	// System.out.println("Params: " + params);
+	// System.out.println("Expected: " + expected);
 
 	/* Params and Expected need to be implemented to receive some
 	   Json objects and convert them into Java objects according
 	   to the requirements of the code challenge.
 	*/
-	A a = new A(new Params(params), new Expected(expected));
-	System.out.println(a);
+	// A a = new A(new Params(params), new Expected(expected));
+	// System.out.println(a);
     }
 
     private class Args {
