@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-27T06:36
-   VERSION: 0.1.4
+   UDPATED: 2018-09-27T07:00
+   VERSION: 0.1.5
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -40,18 +40,46 @@
    .........................................................................
    2018-09-27T06:36 version 0.1.4
    - removed unnecessary import of packages in own package directory;
+   .........................................................................
+   2018-09-27T07:00 version 0.1.5
+   - added import of File, IOException;
+   - added ROOT directory and static initialization;
+   - added cc and ccName;
+   - added private no-arg constructor;
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
+import java.io.File;
+import java.io.IOException;
 import com.google.gson.*;
 import challenges.test.java.*;
 
 public class Main {
-    /* args[0] := {"params":{"n":1,"m":2},"expected":3}
+
+    private Main() {}
+
+    private static File ROOT;
+    static {
+	try {
+	    ROOT = new File("../../CCI-GsonExample").getCanonicalFile();
+	    System.err.println("ROOT: " + ROOT);
+	} catch (IOException ioe) {
+	    ioe.printStackTrace();
+	}
+    }
+
+    private static String cc; 	  // code challenge from command-line
+    private static String ccName; // upper-cased code challenge
+
+    /* 
+       Example args[0] := {"params":{"n":1,"m":2},"expected":3}
     */
     public static void main(String[] args) {
+	Main.cc = args[0];
+	Main.ccName = Main.cc.substring(0,1).toUpperCase() + Main.cc.substring(1);
+	
 	Gson gson = new Gson();
 
 	JsonParser parser = new JsonParser();
