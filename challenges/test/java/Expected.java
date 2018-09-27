@@ -27,7 +27,7 @@ package challenges.test.java;
 import com.google.gson.*;
 import lang.java.*;
 
-public class Expected extends AExpected {
+public class Expected implements IExpected {
     private static String expected;
     Gson gson = new Gson();
 

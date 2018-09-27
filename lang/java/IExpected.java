@@ -1,8 +1,8 @@
-/* lang/java/AExpected.java
+/* lang/java/IExpected.java
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-27
-   VERSION: 0.1.1
+   VERSION: 0.1.2
    AUTHOR:  wlharvey4
    ABOUT:   Abstract class AExpected for concrete class Expected
    NOTES:
@@ -15,9 +15,13 @@
    .........................................................................
    2018-09-27 version 0.1.1
    - added code information
+   .........................................................................
+   2018-09-27T06:30 version 0.1.2
+   - changed abstract class to interface;
+   - changed name of file to IExpected;
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
-public abstract class AExpected {}
+public interface IExpected {}

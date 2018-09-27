@@ -27,7 +27,7 @@ package challenges.test.java;
 import com.google.gson.*;
 import lang.java.*;
 
-public class Params extends AParams {
+public class Params implements IParams {
     private static int n;
     private static int m;
 

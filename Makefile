@@ -27,7 +27,7 @@ default : main
 
 main : $(PACKAGEMAIN)/Main.class
 
-lang/java/Main.class : $(PACKAGEMAIN)/Main.java $(PACKAGEMAIN)/IA.java $(PACKAGEMAIN)/AParams.java $(PACKAGEMAIN)/AExpected.java \
+lang/java/Main.class : $(PACKAGEMAIN)/Main.java $(PACKAGEMAIN)/IA.java $(PACKAGEMAIN)/IParams.java $(PACKAGEMAIN)/IExpected.java \
 	$(PACKAGEA)/A.java $(PACKAGEA)/Params.java $(PACKAGEA)/Expected.java
 	javac -classpath $(CLASSPATH) $(PACKAGEMAIN)/Main.java
 
