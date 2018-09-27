@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-27T05:45
-   VERSION: 0.1.3
+   UDPATED: 2018-09-27T06:36
+   VERSION: 0.1.4
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -24,26 +24,28 @@
    CHANGE-LOG:
    .........................................................................
    2018-09-26T12:30 version 0.1.0
-   - first working version
+   - first working version;
    .........................................................................
    2018-09-26T18:00 version 0.1.1
-   - moved files into packages
+   - moved files into packages;
    .........................................................................
    2018-09-26T19:30 version 0.1.2
    - updated packages and importing;
    - created Makefile;
-   - program compiles successfully with Makefile; cleans successfully
+   - program compiles successfully with Makefile; cleans successfully;
    .........................................................................
    2018-09-27T05:51 version 0.1.3
    - adjusted packages again;
-   - adjusted code comments
+   - adjusted code comments;
+   .........................................................................
+   2018-09-27T06:36 version 0.1.4
+   - removed unnecessary import of packages in own package directory;
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
 import com.google.gson.*;
-import lang.java.*;
 import challenges.test.java.*;
 
 public class Main {
