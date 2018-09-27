@@ -1,12 +1,13 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-27T07:00
-   VERSION: 0.1.5
+   UDPATED: 2018-09-27T08:40
+   VERSION: 0.1.6
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
    using JSON elements instead of Strings
+   NOTES:   Main must be run from the ROOT directory (CCI-GsonExample/)
    COMPONENTS:
      lang.java.Main.java      --- main method
      lang.java.IA.java        --- main interface
@@ -19,8 +20,8 @@
 
    ROOT:        CCI-GsonExample
    CLASSPATH:   .:gson-2.8.5.jar
-   compilation: javac lang/java/Main.java
-   usage: ? java Main "{\"params\":{\"n\":1,\"m\":2},\"expected\":3}"
+   compilation: javac -classpath $CLASSPATH lang/java/Main.java
+   usage: ? java lang/java/Main "{\"params\":{\"n\":1,\"m\":2},\"expected\":3}"
    CHANGE-LOG:
    .........................................................................
    2018-09-26T12:30 version 0.1.0
@@ -46,6 +47,9 @@
    - added ROOT directory and static initialization;
    - added cc and ccName;
    - added private no-arg constructor;
+   .........................................................................
+   2018-09-27T08:40 version 0.1.6
+   - added File computations and exceptions
    -------------------------------------------------------------------------
 */
 
@@ -63,22 +67,38 @@ public class Main {
     private static File ROOT;
     static {
 	try {
-	    ROOT = new File("../../CCI-GsonExample").getCanonicalFile();
-	    System.err.println("ROOT: " + ROOT);
+	    ROOT = new File("./").getCanonicalFile();
 	} catch (IOException ioe) {
 	    ioe.printStackTrace();
 	}
     }
 
     private static String cc; 	  // code challenge from command-line
-    private static String ccName; // upper-cased code challenge
+    private static String ccName; // upper-cased code challenge name
+    private static File   ccJSON; // code challenge JSON data file
+
+    /* Initialize class variables using code challenge from command line */
+    private static void ccJSON(String cc) throws IOException {
+	Main.cc = cc;
+	Main.ccName = Main.cc.substring(0,1).toUpperCase() + Main.cc.substring(1);
+
+	Main.ccJSON = new File(new File(new File(Main.ROOT, "challenges"), Main.cc), Main.cc + ".json");
+	if (!(Main.ccJSON.canRead()||Main.ccJSON.exists())) {
+	    throw new IOException("ERROR: FILE NOT FOUND OR NOT READABLE: " + Main.ccJSON );
+	}
+    }
 
     /* 
        Example args[0] := {"params":{"n":1,"m":2},"expected":3}
     */
     public static void main(String[] args) {
-	Main.cc = args[0];
-	Main.ccName = Main.cc.substring(0,1).toUpperCase() + Main.cc.substring(1);
+	try { Main.ccJSON(args[0]); }
+	catch (IOException ioe) { ioe.printStackTrace(); System.exit(-1); }
+	catch (NullPointerException | ArrayIndexOutOfBoundsException mce) {
+	    System.err.println("USAGE: $java lang/java/Main <code-challenge>");
+	    mce.printStackTrace();
+	    System.exit(0);
+	}
 	
 	Gson gson = new Gson();
 
