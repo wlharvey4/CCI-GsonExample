@@ -1,3 +1,4 @@
+package chall.enge.java;
 import com.google.gson.*;
 
 public class Params extends AParams {

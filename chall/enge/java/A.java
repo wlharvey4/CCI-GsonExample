@@ -1,3 +1,5 @@
+package chall.enge.java;
+
 public class A implements IA {
     private Params params;
     private Expected expected;

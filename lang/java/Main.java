@@ -2,7 +2,7 @@
    =======================================================
    CREATED: 2018-09-26T12:30
    UDPATED:
-   VERSION: 0.1.0
+   VERSION: 0.1.1
    AUTHOR: wlharvey4
    ABOUT: Example setup for reading in JSON objects of "params" objects of arbitrary construction
           and initializing an A object (i.e., InputExpected) using JSON elements instead of Strings
@@ -21,9 +21,13 @@
    .......................................................
    2018-09-26T12:30 VERSION 0.1.0
    - first working version
+   .......................................................
+   2018-09-26T18:00 VERSION 0.1.1
+   - moved files into packages
    -------------------------------------------------------
 */
 
+package lang.java;
 import com.google.gson.*;
 
 public class Main {
