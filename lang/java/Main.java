@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-27T13:40
-   VERSION: 0.1.7
+   UDPATED: 2018-09-28T13:15
+   VERSION: 0.2.0
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -59,16 +59,21 @@
    - added Gson, JsonParser, JsonElement, JsonArray
    - added catch-blocks of all exceptions
    - commented out former code in preparation for new code iterating over data
+   .........................................................................
+   2018-09-28T13:15 version 0.2.0
+   - implemented full JSON iterator and successfully iterated through fizzbuzz.json
+     printing each params and expected values;
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
+import java.util.Iterator;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import com.google.gson.*;
-import challenges.test.java.*;
+import challenges.fizzbuzz.java.*;
 
 public class Main {
 
@@ -120,7 +125,22 @@ public class Main {
 	    JsonParser parser = new JsonParser();
 	    JsonElement ccElement = parser.parse(fr);
 	    JsonArray ccJsonArr = ccElement.getAsJsonArray();
-	    
+	    Iterator<JsonElement> iterJson = ccJsonArr.iterator();
+	    JsonElement elJson, params, expected;
+	    JsonObject objJson;
+
+	    while (iterJson.hasNext()) {
+		elJson   = iterJson.next();
+		objJson  = elJson.getAsJsonObject();
+		params   = objJson.get("params");
+		expected = objJson.get("expected");
+		if (params == null || expected == null)
+		    throw new IllegalStateException
+			("ERROR: params (" + params + ") or expected (" + expected + ") is null");
+		InputExpected ie = new InputExpected(new Params(params), new Expected(expected));
+		System.out.println(ie);
+	    }
+
 	}
 	catch (JsonIOException jioe) {
 	    jioe.printStackTrace();
@@ -142,22 +162,6 @@ public class Main {
 	    ioe.printStackTrace();
 	    System.exit(-1);
 	}
-
-	// JsonElement elements = parser.parse(args[0]);
-	// JsonObject paramsExpected = elements.getAsJsonObject();
-
-	// JsonElement params = paramsExpected.get("params");
-	// JsonElement expected = paramsExpected.get("expected");
-
-	// System.out.println("Params: " + params);
-	// System.out.println("Expected: " + expected);
-
-	/* Params and Expected need to be implemented to receive some
-	   Json objects and convert them into Java objects according
-	   to the requirements of the code challenge.
-	*/
-	// A a = new A(new Params(params), new Expected(expected));
-	// System.out.println(a);
     }
 
     private class Args {
