@@ -28,7 +28,7 @@ default : main
 main : $(PACKAGEMAIN)/Main.class
 
 lang/java/Main.class : $(PACKAGEMAIN)/Main.java $(PACKAGEMAIN)/IE.java $(PACKAGEMAIN)/IParams.java $(PACKAGEMAIN)/IExpected.java \
-	$(PACKAGEIE)/InputExpected.java $(PACKAGEIE)/Params.java $(PACKAGEIE)/Expected.java
+	$(PACKAGEMAIN)/InputExpected.java $(PACKAGEIE)/Params.java $(PACKAGEIE)/Expected.java
 	javac -classpath $(CLASSPATH) $(PACKAGEMAIN)/Main.java
 
 clean :

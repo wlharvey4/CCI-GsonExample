@@ -1,8 +1,8 @@
-/* challenges/fizzbuzz/java/InputExpected.java
+/* lang/java/InputExpected.java
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-28
-   VERSION: 0.2.1
+   VERSION: 0.3.0
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -25,28 +25,29 @@
    .........................................................................
    2018-09-28T13:47 version 0.2.1
    - refactored IA to IE
+   .........................................................................
+   2018-09-28T16:00 version 0.3.0
+   - refactored to package lang.java
    -------------------------------------------------------------------------
 */
 
-package challenges.fizzbuzz.java;
-
-import lang.java.*;
+package lang.java;
 
 public class InputExpected implements IE {
-    private Params params;
-    private Expected expected;
+    private IParams params;
+    private IExpected expected;
 
     public InputExpected() {}
-    public InputExpected(Params p, Expected e) {
+    public InputExpected(IParams p, IExpected e) {
 	this.params = p;
 	this.expected = e;
     }
 
-    public Params getParams() {
+    public IParams getParams() {
 	return this.params;
     }
 
-    public Expected getExpected() {
+    public IExpected getExpected() {
 	return this.expected;
     }
 
