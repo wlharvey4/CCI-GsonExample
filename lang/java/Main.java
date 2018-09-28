@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-28T13:15
-   VERSION: 0.2.0
+   UDPATED: 2018-09-28T16:30
+   VERSION: 0.2.1
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -63,6 +63,9 @@
    2018-09-28T13:15 version 0.2.0
    - implemented full JSON iterator and successfully iterated through fizzbuzz.json
      printing each params and expected values;
+   .........................................................................
+   2018-09-28T16:30 version 0.2.1
+   - changed package lang.java.InputExpected to lang.java.ParamsExpected
    -------------------------------------------------------------------------
 */
 
@@ -137,7 +140,7 @@ public class Main {
 		if (params == null || expected == null)
 		    throw new IllegalStateException
 			("ERROR: params (" + params + ") or expected (" + expected + ") is null");
-		InputExpected ie = new InputExpected(new Params(params), new Expected(expected));
+		ParamsExpected ie = new ParamsExpected(new Params(params), new Expected(expected));
 		System.out.println(ie);
 	    }
 

@@ -1,8 +1,8 @@
-/* lang/java/InputExpected.java
+/* lang/java/ParamsExpected.java
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-28
-   VERSION: 0.3.0
+   VERSION: 0.3.2
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -28,17 +28,23 @@
    .........................................................................
    2018-09-28T16:00 version 0.3.0
    - refactored to package lang.java
+   .........................................................................
+   2018-09-28T16:23 version 0.3.1
+   - refactored to package lang.java.ParamsExpected
+   .........................................................................
+   2018-09-28T16:32 version 0.3.2
+   - refactored toString()
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
-public class InputExpected implements IE {
+public class ParamsExpected implements IE {
     private IParams params;
     private IExpected expected;
 
-    public InputExpected() {}
-    public InputExpected(IParams p, IExpected e) {
+    public ParamsExpected() {}
+    public ParamsExpected(IParams p, IExpected e) {
 	this.params = p;
 	this.expected = e;
     }
@@ -52,6 +58,6 @@ public class InputExpected implements IE {
     }
 
     public String toString() {
-	return "A: \n\t" + getParams() + "\n\t" + getExpected();
+	return "ParamsExpected: \n\t" + getParams() + "\n\t" + getExpected();
     }
 }

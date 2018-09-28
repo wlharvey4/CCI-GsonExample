@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-28
-   VERSION: 0.2.0
+   VERSION: 0.2.1
    AUTHOR:  wlharvey4
    ABOUT:   Receives Expected as JSON and converts to Java
    ROOT:    CCI-GsonExample
@@ -22,6 +22,9 @@
    .........................................................................
    2018-09-28 version 0.2.0
    - creaed challenges.fizzbuzz.java.Expected
+   .........................................................................
+   2018-09-28 version 0.2.1
+   - refactored toString()
    -------------------------------------------------------------------------
 */
 
@@ -49,6 +52,6 @@ public class Expected implements IExpected {
     }
 
     public String toString() {
-	return "Expected expected: " + this.expected;
+	return "Expected:\t" + this.expected;
     }
 }
