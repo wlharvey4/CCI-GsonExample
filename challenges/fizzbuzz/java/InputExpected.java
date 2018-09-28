@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-28
-   VERSION: 0.2.0
+   VERSION: 0.2.1
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -22,6 +22,9 @@
    .........................................................................
    2018-09-28T13:30 version 0.2.0
    - created challenges.fizzbuzz.java.InputExpected
+   .........................................................................
+   2018-09-28T13:47 version 0.2.1
+   - refactored IA to IE
    -------------------------------------------------------------------------
 */
 
@@ -29,7 +32,7 @@ package challenges.fizzbuzz.java;
 
 import lang.java.*;
 
-public class InputExpected implements IA {
+public class InputExpected implements IE {
     private Params params;
     private Expected expected;
 

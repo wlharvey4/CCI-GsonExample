@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-28
-   VERSION: 0.2.0
+   VERSION: 0.2.1
    AUTHOR:  wlharvey4
    ABOUT:   Receives Params from JSON and converts them into Java
    ROOT:    CCI-GsonExample
@@ -22,6 +22,10 @@
    .........................................................................
    2018-09-28T13:20 version 0.2.0
    - created challenges.fizzbuzz.java.Params
+   .........................................................................
+   2018-09-28T14:00 version 0.2.1
+   - refactored name ccParams to CCParams;
+   - modified comments
    -------------------------------------------------------------------------
 */
 
@@ -37,13 +41,15 @@ public class Params implements IParams {
 
     Gson gson = new Gson();
 
-    /* params := JSON string */
+    /* Constructor with one parameter of type JsonElement */
     public Params(JsonElement params) {
-	/* this code interprets JSON based upon needs of code challenge */
-	ccParams ccp = gson.fromJson(params, ccParams.class);
-	n = ccp.getN();
+	CCParams ccp = gson.fromJson(params, CCParams.class);
+	/* once the params has been parsed, this code extracts the params
+	   using the methods provided by CCParam */
+	this.n = ccp.getN();
     }
 
+    /* this should probably be a generic array */
     public static int[] getParams() {
 	return new int[]{n};
     }
@@ -53,7 +59,9 @@ public class Params implements IParams {
 	return "Params\tn: " + ps[0];
     }
 
-    private class ccParams {
+    /* this is used by gson.fromJson to parse the incoming params
+       and provide a method to extract the params */
+    private class CCParams {
 	private int n;
 
 	public int getN() {
