@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-28
    UPDATED: 2018-09-29
-   VERSION: 0.0.4
+   VERSION: 0.0.5
    AUTHOR:  wlharvey4
    ABOUT:   Concrete class representing a code challenge Result, which is
    	    equivalent to an Expected type
@@ -24,11 +24,17 @@
    - changed constructor to one taking a String parameter;
    - added try-catch for IllegalArgumentException should something other than
      a FB type comes in; also converted string to all upper case;
+   .........................................................................
+   2018-09-29T09:28 version 0.0.5
+   - refactored constructor to test incoming String for whether it is an
+     Integer or String, and create the correct type using a Scanner;
+   - refactored to add toString() methods to main class and subclasses
    -------------------------------------------------------------------------
 */
 
 package challenges.fizzbuzz.java;
 
+import java.util.Scanner;
 import lang.java.*;
 
 public class Result implements IResult {
@@ -36,12 +42,22 @@ public class Result implements IResult {
 
     public Result() {}
 
+    /* need a Scanner to check whether the incoming result is an Integer;
+       if not, it will be an FB enum.
+    */
+    Scanner intScanner;
+
     public Result(String result) {
-	try {
-	    this.result = new FB_Result(FB.valueOf(result.toUpperCase()));
-	} catch (IllegalArgumentException iae) {
-	    System.err.println("ERROR: result: `" + result + "' does not have an FB value");
-	    System.exit(-1);
+	intScanner = new Scanner(result);
+	if (intScanner.hasNextInt()) {
+	    this.result = new Result(intScanner.nextInt());
+	} else {
+	    try {
+		this.result = new FB_Result(FB.valueOf(result.toUpperCase()));
+	    } catch (IllegalArgumentException iae) {
+		System.err.println("ERROR: result: `" + result + "' does not have an FB value");
+		System.exit(-1);
+	    }
 	}
     }
 
@@ -53,10 +69,17 @@ public class Result implements IResult {
 	return this.result;
     }
 
+    public String toString() {
+	return "Result:\t" + result();
+    }
+
     private class FB_Result extends Result {
 	FB result;
 	FB_Result(FB fb) {
 	    this.result = fb;
+	}
+	public String toString() {
+	    return result.toString();
 	}
     }
 
@@ -64,6 +87,9 @@ public class Result implements IResult {
 	Integer result;
 	Int_Result(int i) {
 	    this.result = i;
+	}
+	public String toString() {
+	    return result.toString();
 	}
     }
 }

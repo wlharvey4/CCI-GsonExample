@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-29
-   VERSION: 0.2.4
+   VERSION: 0.2.5
    AUTHOR:  wlharvey4
    ABOUT:   Receives Expected as JSON and converts to Java
    ROOT:    CCI-GsonExample
@@ -35,6 +35,11 @@
    2018-09-29T08:53 version 0.2.4
    - refactored Expected constructor to convert incoming JsonElement into the
      appropriate Result type
+   .........................................................................
+   2018-09-29T09:25 version 0.2.5
+   - refactored Scanner check into Result constructor
+   - refactored toString() to return getExpected() instead of instance variable
+     directly
    -------------------------------------------------------------------------
 */
 
@@ -48,7 +53,6 @@ public class Expected implements IExpected {
     private Result expected;
 
     Gson gson = new Gson();
-    Scanner intScanner;
 
     /* no args constructor */
     public Expected() {}
@@ -60,13 +64,7 @@ public class Expected implements IExpected {
     */
     public Expected(JsonElement expected) {
 	String e = expected.getAsString();
-	System.err.println("Expected working on " + e);
-	intScanner = new Scanner(e);
-	if (intScanner.hasNextInt()) {
-	    this.expected = new Result(intScanner.nextInt());
-	} else {
-	    this.expected = new Result(e);
-	}
+	this.expected = new Result(e);
     }
 
     public Result getExpected() {
@@ -74,6 +72,6 @@ public class Expected implements IExpected {
     }
 
     public String toString() {
-	return "Expected:\t" + this.expected;
+	return "Expected:\t" + getExpected();
     }
 }
