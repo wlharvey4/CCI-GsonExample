@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-28
-   VERSION: 0.2.2
+   VERSION: 0.2.3
    AUTHOR:  wlharvey4
    ABOUT:   Receives Params from JSON and converts them into Java
    ROOT:    CCI-GsonExample
@@ -29,6 +29,11 @@
    .........................................................................
    2018-09-28T16:30 version 0.2.2
    - refactored toString()
+   .........................................................................
+   2018-09-29T14:30 version 0.2.3
+   - removed static from instance variable n;
+   - refactored getParams() into n()
+   - also refactored toString() in accordance with n();
    -------------------------------------------------------------------------
 */
 
@@ -38,7 +43,7 @@ import com.google.gson.*;
 import lang.java.*;
 
 public class Params implements IParams {
-    private static int n;
+    private int n;
 
     public Params() {}
 
@@ -53,13 +58,12 @@ public class Params implements IParams {
     }
 
     /* this should probably be a generic array */
-    public static int[] getParams() {
-	return new int[]{n};
+    public int n() {
+	return this.n;
     }
 
     public String toString() {
-	int[] ps = getParams();
-	return "Params  :\t" + "n=" + ps[0];
+	return "Params  :\t" + "n=" + n();
     }
 
     /* this is used by gson.fromJson to parse the incoming params

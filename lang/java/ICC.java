@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-28
    UPDATED: 2018-09-29
-   VERSION: 0.0.4
+   VERSION: 0.0.5
    AUTHOR:  wlharvey4
    ABOUT:   Interface for code challenges
    ROOT:    CCI-GsonExample
@@ -23,13 +23,16 @@
    2018-09-29T10:11 version 0.0.4
    - refactored return type of result() to be IResult instead of void;
    - refactored to require method IParams params();
+   .........................................................................
+   2018-09-29T14:30 version 0.0.5
+   - refactored parameter out of calculate() method;
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
 public interface ICC {
-    public IResult calculate(IParams params);
+    public IResult calculate();
     public IParams params();
     public IResult result();
 }

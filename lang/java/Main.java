@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-28T16:30
-   VERSION: 0.2.1
+   UDPATED: 2018-09-29T14:25
+   VERSION: 0.2.2
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -66,6 +66,15 @@
    .........................................................................
    2018-09-28T16:30 version 0.2.1
    - changed package lang.java.InputExpected to lang.java.ParamsExpected
+   .........................................................................
+   2018-09-29T14:25 version 0.2.2
+   - refactored names of params and expected into paramsJson and expectedJson;
+   - refactored calls to Params and Expected out of the call to ParamsExpected
+     because these will have to be reflected calls in the future;
+   - created new object Fizzbuzz cc by calling Fizzbuzz's constructor with
+     ParamExpected's method to getParams(); also called cc's method result(),
+     but it only returns a null value at this point; nevertheless everything
+     still compiles and runs successfully;
    -------------------------------------------------------------------------
 */
 
@@ -129,19 +138,26 @@ public class Main {
 	    JsonElement ccElement = parser.parse(fr);
 	    JsonArray ccJsonArr = ccElement.getAsJsonArray();
 	    Iterator<JsonElement> iterJson = ccJsonArr.iterator();
-	    JsonElement elJson, params, expected;
+	    JsonElement elJson, paramsJson, expectedJson;
 	    JsonObject objJson;
 
 	    while (iterJson.hasNext()) {
 		elJson   = iterJson.next();
 		objJson  = elJson.getAsJsonObject();
-		params   = objJson.get("params");
-		expected = objJson.get("expected");
-		if (params == null || expected == null)
+		paramsJson   = objJson.get("params");
+		expectedJson = objJson.get("expected");
+		if (paramsJson == null || expectedJson == null)
 		    throw new IllegalStateException
-			("ERROR: params (" + params + ") or expected (" + expected + ") is null");
-		ParamsExpected ie = new ParamsExpected(new Params(params), new Expected(expected));
-		System.out.println(ie);
+			("ERROR: params (" + paramsJson + ") or expected (" + expectedJson + ") is null");
+
+		IParams params     = new Params(paramsJson);
+		IExpected expected = new Expected(expectedJson);
+		ParamsExpected pe  = new ParamsExpected(params, expected);
+		System.out.println(pe);
+
+		Fizzbuzz cc = new Fizzbuzz(pe.getParams());
+		System.out.println(cc.result());
+		System.out.println();
 	    }
 
 	}

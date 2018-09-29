@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-28
    UPDATED: 2018-09-29
-   VERSION: 0.0.5
+   VERSION: 0.0.6
    AUTHOR:  wlharvey4
    ABOUT:   fizzbuzz challenge in Java
    ROOT:    CCI-GsonExample
@@ -30,6 +30,14 @@
      assign return value to instance variable result;
    - refactored to have getParams() be called params() and be required through
      interface ICC;
+     .........................................................................
+   2018-09-29T14:10 version 0.0.6
+   - refactored instance variables to hold Params and Result instead of IParams
+     and IResult; needed to cast constructor argument IParams into Params;
+     the instance method getters return IParams and IResult though;
+   - refactored calculate() to not accept a parameter, but use its own instance
+     variable;
+   - implemented calculate() to obtain the param n;
    -------------------------------------------------------------------------
 */
 
@@ -38,16 +46,23 @@ package challenges.fizzbuzz.java;
 import lang.java.*;
 
 public class Fizzbuzz implements ICC {
-    private IParams params;
-    private IResult result;
+    private Params params;
+    private Result result;
 
     public Fizzbuzz() {}
+
+    /* constructor must accept an IParams, but then cast it into a local
+       Params for storage and use;
+    */
     public Fizzbuzz(IParams p) {
-	this.params = p;
-	this.result = this.calculate(this.params());
+	this.params = (Params)p;
+	this.result = this.calculate();
     }
 
-    public IResult calculate(IParams params) {
+    public Result calculate() {
+	System.err.println("calculating " + params);
+	int n = params.n();
+	System.err.println(n);
 	return new Result();
     }
 
@@ -55,6 +70,6 @@ public class Fizzbuzz implements ICC {
 	return this.params;
     }
     public IResult result() {
-	return result;
+	return this.result;
     }
 }
