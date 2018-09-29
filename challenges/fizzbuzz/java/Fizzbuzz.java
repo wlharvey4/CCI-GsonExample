@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-28
    UPDATED: 2018-09-29
-   VERSION: 0.0.6
+   VERSION: 0.1.0
    AUTHOR:  wlharvey4
    ABOUT:   fizzbuzz challenge in Java
    ROOT:    CCI-GsonExample
@@ -38,6 +38,9 @@
    - refactored calculate() to not accept a parameter, but use its own instance
      variable;
    - implemented calculate() to obtain the param n;
+   .........................................................................
+   2018-09-29T15:55 version 0.1.0
+   - fully implemented calculat() method; correctly returns Result value;
    -------------------------------------------------------------------------
 */
 
@@ -62,8 +65,22 @@ public class Fizzbuzz implements ICC {
     public Result calculate() {
 	System.err.println("calculating " + params);
 	int n = params.n();
-	System.err.println(n);
-	return new Result();
+	boolean fizz = n % 3 == 0;
+	boolean buzz = n % 5 == 0;
+	boolean fizzbuzz = fizz && buzz;
+	Result res;
+
+	/* this is Fizzbuzz; everything's purpose is to calculate and return this */
+	if (fizz || buzz || fizzbuzz) {
+	    FB fb;
+	    if (fizzbuzz) fb = FB.FIZZBUZZ;
+	    else fb = fizz ? FB.FIZZ : FB.BUZZ;
+	    res = new Result(fb);
+	} else {
+	    res = new Result(n);
+	}
+
+	return res;
     }
 
     public IParams params() {

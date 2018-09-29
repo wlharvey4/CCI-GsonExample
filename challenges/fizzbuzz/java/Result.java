@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-28
    UPDATED: 2018-09-29
-   VERSION: 0.0.5
+   VERSION: 0.1.0
    AUTHOR:  wlharvey4
    ABOUT:   Concrete class representing a code challenge Result, which is
    	    equivalent to an Expected type
@@ -29,6 +29,9 @@
    - refactored constructor to test incoming String for whether it is an
      Integer or String, and create the correct type using a Scanner;
    - refactored to add toString() methods to main class and subclasses
+   .........................................................................
+   2018-09-29T15:55 version 0.1.0
+   - added a constructor with an FB argument to aid Fizzbuzz.calculate()
    -------------------------------------------------------------------------
 */
 
@@ -59,6 +62,10 @@ public class Result implements IResult {
 		System.exit(-1);
 	    }
 	}
+    }
+
+    public Result (FB result) {
+	this.result = new FB_Result(result);
     }
 
     public Result(int result) {
