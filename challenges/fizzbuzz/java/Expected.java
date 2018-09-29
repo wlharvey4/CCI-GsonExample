@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-29
-   VERSION: 0.2.3
+   VERSION: 0.2.4
    AUTHOR:  wlharvey4
    ABOUT:   Receives Expected as JSON and converts to Java
    ROOT:    CCI-GsonExample
@@ -31,11 +31,16 @@
    .........................................................................
    2018-09-29 version 0.2.3
    - convert Expected to a Result instead of String
+   .........................................................................
+   2018-09-29T08:53 version 0.2.4
+   - refactored Expected constructor to convert incoming JsonElement into the
+     appropriate Result type
    -------------------------------------------------------------------------
 */
 
 package challenges.fizzbuzz.java;
 
+import java.util.Scanner;
 import com.google.gson.*;
 import lang.java.*;
 
@@ -43,6 +48,7 @@ public class Expected implements IExpected {
     private Result expected;
 
     Gson gson = new Gson();
+    Scanner intScanner;
 
     /* no args constructor */
     public Expected() {}
@@ -53,7 +59,14 @@ public class Expected implements IExpected {
        (either a FB enum or an int)
     */
     public Expected(JsonElement expected) {
-	this.expected = gson.fromJson(expected, Result.class);
+	String e = expected.getAsString();
+	System.err.println("Expected working on " + e);
+	intScanner = new Scanner(e);
+	if (intScanner.hasNextInt()) {
+	    this.expected = new Result(intScanner.nextInt());
+	} else {
+	    this.expected = new Result(e);
+	}
     }
 
     public Result getExpected() {

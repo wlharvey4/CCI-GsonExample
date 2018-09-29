@@ -2,7 +2,7 @@
 # #########################################################################
 # CREATED: 2018-09-26
 # UPDATED: 2018-09-29
-# VERSION: 0.3.1
+# VERSION: 0.3.2
 # AUTHOR:  wlharvey4
 # ABOUT:   makefile for CCI-GsonExample program
 # NOTES:
@@ -26,6 +26,9 @@
 # .........................................................................
 # 2018-09-29T07:26 version 0.3.1
 # - added FB
+# .........................................................................
+# 2018-09-29T08:56 version 0.3.2
+# - added Expected
 # -------------------------------------------------------------------------
 
 MAIN := Main
@@ -35,7 +38,7 @@ PACKAGEMAIN := lang/java
 
 .PHONY : default main Main IParams IExpected IResult ICC Params Result fizzbuzz Fizzbuzz FB clean
 
-default : Main ParamsExpected IParams IExpected IResult ICC Params Result Fizzbuzz
+default : Main ParamsExpected IParams IExpected IResult ICC Params Result Expected Fizzbuzz
 
 main : Main
 Main : $(PACKAGEMAIN)/Main.class
@@ -77,6 +80,11 @@ Result : $(PACKAGECC)/Result.class
 
 $(PACKAGECC)/Result.class : $(PACKAGECC)/Result.java
 	javac -classpath $(CLASSPATH) $(PACKAGECC)/Result.java
+
+Expected : $(PACKAGECC)/Expected.class
+
+$(PACKAGECC)/Expected.class : $(PACKAGECC)/Expected.java
+	javac -classpath $(CLASSPATH) $(PACKAGECC)/Expected.java
 
 fizzbuzz: Fizzbuzz
 Fizzbuzz : $(PACKAGECC)/Fizzbuzz.class
