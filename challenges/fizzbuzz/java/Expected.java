@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-29
-   VERSION: 0.2.2
+   VERSION: 0.2.3
    AUTHOR:  wlharvey4
    ABOUT:   Receives Expected as JSON and converts to Java
    ROOT:    CCI-GsonExample
@@ -28,6 +28,9 @@
    .........................................................................
    2018-09-29 version 0.2.2
    - removed static from instance variable
+   .........................................................................
+   2018-09-29 version 0.2.3
+   - convert Expected to a Result instead of String
    -------------------------------------------------------------------------
 */
 
@@ -37,20 +40,23 @@ import com.google.gson.*;
 import lang.java.*;
 
 public class Expected implements IExpected {
-    private String expected;
+    private Result expected;
+
     Gson gson = new Gson();
 
     /* no args constructor */
     public Expected() {}
 
-    /* expected: JSON Element
-       fromJson method can accept a JsonElement as well as a String
+    /*
+       fromJson() method can accept a JsonElement as well as a String;
+       the idea is to convert the JsonElement into a Result type
+       (either a FB enum or an int)
     */
     public Expected(JsonElement expected) {
-	this.expected = gson.fromJson(expected, String.class);
+	this.expected = gson.fromJson(expected, Result.class);
     }
 
-    public String getExpected() {
+    public Result getExpected() {
 	return this.expected;
     }
 

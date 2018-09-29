@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-28
    UPDATED: 2018-09-29
-   VERSION: 0.0.2
+   VERSION: 0.0.3
    AUTHOR:  wlharvey4
    ABOUT:   Concrete class representing a code challenge Result, which is
    	    equivalent to an Expected type
@@ -16,6 +16,9 @@
    .........................................................................
    2018-09-29T07:10 version 0.0.2
    - Implemented Result
+   .........................................................................
+   2018-09-29T08:00 version 0.0.3
+   - use an Integer rather than int
    -------------------------------------------------------------------------
 */
 
@@ -47,7 +50,7 @@ public class Result implements IResult {
     }
 
     private class Int_Result extends Result{
-	int result;
+	Integer result;
 	Int_Result(int i) {
 	    this.result = i;
 	}
