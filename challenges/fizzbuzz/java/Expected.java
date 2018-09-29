@@ -1,8 +1,8 @@
 /* challenges/test/java/Expected.java
    =========================================================================
    CREATED: 2018-09-26
-   UPDATED: 2018-09-28
-   VERSION: 0.2.1
+   UPDATED: 2018-09-29
+   VERSION: 0.2.2
    AUTHOR:  wlharvey4
    ABOUT:   Receives Expected as JSON and converts to Java
    ROOT:    CCI-GsonExample
@@ -25,6 +25,9 @@
    .........................................................................
    2018-09-28 version 0.2.1
    - refactored toString()
+   .........................................................................
+   2018-09-29 version 0.2.2
+   - removed static from instance variable
    -------------------------------------------------------------------------
 */
 
@@ -34,7 +37,7 @@ import com.google.gson.*;
 import lang.java.*;
 
 public class Expected implements IExpected {
-    private static String expected;
+    private String expected;
     Gson gson = new Gson();
 
     /* no args constructor */

@@ -1,8 +1,8 @@
 # Makefile
 # #########################################################################
 # CREATED: 2018-09-26
-# UPDATED: 2018-09-28
-# VERSION: 0.3.0
+# UPDATED: 2018-09-29
+# VERSION: 0.3.1
 # AUTHOR:  wlharvey4
 # ABOUT:   makefile for CCI-GsonExample program
 # NOTES:
@@ -21,8 +21,11 @@
 # 2018-09-28 version 0.2.1
 # - adjusted names of files to correspond with refactoring
 # .........................................................................
-# 2018-09-28T19:00 version 0.2.2
+# 2018-09-28T19:00 version 0.3.0
 # - redid whole Makefile to be more explicit
+# .........................................................................
+# 2018-09-29T07:26 version 0.3.1
+# - added FB
 # -------------------------------------------------------------------------
 
 MAIN := Main
@@ -30,7 +33,7 @@ CLASSPATH := .:gson-2.8.5.jar
 PACKAGECC := challenges/fizzbuzz/java
 PACKAGEMAIN := lang/java
 
-.PHONY : default main clean
+.PHONY : default main Main IParams IExpected IResult ICC Params Result fizzbuzz Fizzbuzz FB clean
 
 default : Main ParamsExpected IParams IExpected IResult ICC Params Result Fizzbuzz
 
@@ -80,6 +83,11 @@ Fizzbuzz : $(PACKAGECC)/Fizzbuzz.class
 
 $(PACKAGECC)/Fizzbuzz.class : $(PACKAGECC)/Fizzbuzz.java $(PACKAGECC)/Result.class
 	javac -classpath $(CLASSPATH) $(PACKAGECC)/Fizzbuzz.java
+
+FB : $(PACKAGECC)/FB.class
+
+$(PACKAGECC)/FB.class : $(PACKAGECC)/FB.java
+	javac -classpath $(CLASSPATH) $(PACKAGECC)/FB.java
 
 clean :
 	rm -rfv *~ $(PACKAGEMAIN)/*{.class,~} $(PACKAGECC)/*{.class,~}

@@ -1,8 +1,8 @@
 /* challenge/fizzbuzz/java/Fizzbuzz.java
    =========================================================================
    CREATED: 2018-09-28
-   UPDATED:
-   VERSION: 0.0.2
+   UPDATED: 2018-09-29
+   VERSION: 0.0.3
    AUTHOR:  wlharvey4
    ABOUT:   fizzbuzz challenge in Java
    ROOT:    CCI-GsonExample
@@ -16,6 +16,9 @@
    2018-09-28T19:36 version 0.0.2
    - changed calculate to return void, but set an instance variable Result
      result
+     .........................................................................
+   2018-09-29T07:04 version 0.0.3
+   - added required Result result();
    -------------------------------------------------------------------------
 */
 
@@ -34,5 +37,9 @@ public class Fizzbuzz implements ICC {
 
     public void calculate(IParams params) {
 	this.result = new Result();
+    }
+
+    public Result result() {
+	return result;
     }
 }
