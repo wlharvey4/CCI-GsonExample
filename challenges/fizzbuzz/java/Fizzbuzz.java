@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-28
    UPDATED:
-   VERSION: 0.0.1
+   VERSION: 0.0.2
    AUTHOR:  wlharvey4
    ABOUT:   fizzbuzz challenge in Java
    ROOT:    CCI-GsonExample
@@ -12,6 +12,10 @@
    .........................................................................
    2018-09-28T16:40 version 0.0.1
    - Initial
+   .........................................................................
+   2018-09-28T19:36 version 0.0.2
+   - changed calculate to return void, but set an instance variable Result
+     result
    -------------------------------------------------------------------------
 */
 
@@ -21,13 +25,14 @@ import lang.java.*;
 
 public class Fizzbuzz implements ICC {
     private Params params;
+    private Result result;
 
     public Fizzbuzz() {}
     public Fizzbuzz(Params p) {
 	this.params = p;
     }
 
-    public Result calculate(IParams params) {
-	return new Result();
+    public void calculate(IParams params) {
+	this.result = new Result();
     }
 }
