@@ -1,8 +1,8 @@
 /* challenges/fizzbuzz/java/Result.java
    =========================================================================
    CREATED: 2018-09-28
-   UPDATED: 2018-09-29
-   VERSION: 0.1.1
+   UPDATED: 2018-09-30
+   VERSION: 0.2.0
    AUTHOR:  wlharvey4
    ABOUT:   Concrete class representing a code challenge Result, which is
    	    equivalent to an Expected type
@@ -35,6 +35,11 @@
    .........................................................................
    2018-09-29T17:55 version 0.1.1
    - reformatted toString()
+   .........................................................................
+   2018-09-30T09:00 version 0.2.0
+   - refactored Result instance variable to FizzbuzzResult interface, which has
+     two concrete implementations: FB_Result and Int_Result, so that when
+     Result.result() is called, a FizzbuzzResult type will be returned.
    -------------------------------------------------------------------------
 */
 
@@ -44,7 +49,7 @@ import java.util.Scanner;
 import lang.java.*;
 
 public class Result implements IResult {
-    private Result result;
+    private FizzbuzzResult result;
 
     public Result() {}
 
@@ -56,7 +61,7 @@ public class Result implements IResult {
     public Result(String result) {
 	intScanner = new Scanner(result);
 	if (intScanner.hasNextInt()) {
-	    this.result = new Result(intScanner.nextInt());
+	    this.result = new Int_Result(intScanner.nextInt());
 	} else {
 	    try {
 		this.result = new FB_Result(FB.valueOf(result.toUpperCase()));
@@ -67,7 +72,7 @@ public class Result implements IResult {
 	}
     }
 
-    public Result (FB result) {
+    public Result(FB result) {
 	this.result = new FB_Result(result);
     }
 
@@ -75,7 +80,7 @@ public class Result implements IResult {
 	this.result = new Int_Result(result);
     }
 
-    public Result result() {
+    public FizzbuzzResult result() {
 	return this.result;
     }
 
@@ -83,23 +88,49 @@ public class Result implements IResult {
 	return result().toString();
     }
 
-    private class FB_Result extends Result {
-	FB result;
-	FB_Result(FB fb) {
+    private interface FizzbuzzResult {
+	public boolean equals(FizzbuzzResult that);
+	public boolean equals(FB_Result that);
+	public boolean equals(Int_Result that);
+    }
+
+    private class FB_Result implements FizzbuzzResult {
+	private FB result;
+	private FB_Result() {}
+	private FB_Result(FB fb) {
 	    this.result = fb;
 	}
 	public String toString() {
 	    return result.toString();
 	}
+	public boolean equals(FizzbuzzResult that) {
+	    return true;
+	}
+	public boolean equals(FB_Result that) {
+	    return true;
+	}
+	public boolean equals(Int_Result that) {
+	    return true;
+	}
     }
 
-    private class Int_Result extends Result{
-	Integer result;
-	Int_Result(int i) {
+    private class Int_Result implements FizzbuzzResult {
+	private Integer result;
+	private Int_Result() {}
+	private Int_Result(int i) {
 	    this.result = i;
 	}
 	public String toString() {
 	    return result.toString();
+	}
+	public boolean equals(FizzbuzzResult that) {
+	    return true;
+	}
+	public boolean equals(FB_Result that) {
+	    return true;
+	}
+	public boolean equals(Int_Result that) {
+	    return true;
 	}
     }
 }
