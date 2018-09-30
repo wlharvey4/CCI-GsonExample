@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-30T14:24
-   VERSION: 0.2.4
+   UDPATED: 2018-09-30T14:45
+   VERSION: 0.2.5
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -81,6 +81,12 @@
    .........................................................................
    2018-09-30T14:24 version 0.2.4
    - added call to equals() and printed result; code is functioning
+   .........................................................................
+   2018-09-30T14:45 version 0.2.5
+   - refactored try-with-resources block, Gson calls;
+   - added comments to calls to Params and Expected constructors;
+   - refactored Fizzbuzz type to ICC type; marked three areas that will need
+     reflection for code to work dynamically
    -------------------------------------------------------------------------
 */
 
@@ -136,33 +142,39 @@ public class Main {
 	    System.exit(0);
 	}
 
-	try (FileReader fr = new FileReader(Main.ccJSON)) {
-	    System.err.println("Successfully opened " + Main.ccJSON);
-	
+	try (FileReader ccJsonData = new FileReader(Main.ccJSON)) {
+
 	    Gson gson = new Gson();
-	    JsonParser parser = new JsonParser();
-	    JsonElement ccElement = parser.parse(fr);
-	    JsonArray ccJsonArr = ccElement.getAsJsonArray();
-	    Iterator<JsonElement> iterJson = ccJsonArr.iterator();
-	    JsonElement elJson, paramsJson, expectedJson;
-	    JsonObject objJson;
+	    JsonParser  parser;
+	    JsonObject  objJson;
+	    JsonArray   ccJsonArr;
+	    JsonElement paramsJson, expectedJson;
+	    Iterator<JsonElement> iterJson;
+
+	    parser    = new JsonParser();
+	    ccJsonArr = parser.parse(ccJsonData).getAsJsonArray();
+	    iterJson  = ccJsonArr.iterator();
 
 	    while (iterJson.hasNext()) {
-		elJson   = iterJson.next();
-		objJson  = elJson.getAsJsonObject();
+		objJson      = iterJson.next().getAsJsonObject();
 		paramsJson   = objJson.get("params");
 		expectedJson = objJson.get("expected");
+
 		if (paramsJson == null || expectedJson == null)
 		    throw new IllegalStateException
 			("ERROR: params (" + paramsJson + ") or expected (" + expectedJson + ") is null");
 
-		IParams params     = new Params(paramsJson);
-		IExpected expected = new Expected(expectedJson);
-		ParamsExpected pe  = new ParamsExpected(params, expected);
+		IParams params     = new Params(paramsJson);		// <== Main DOES NOT have knowledge
+		IExpected expected = new Expected(expectedJson);	// <== of these two types, so need reflection here
+
+		ParamsExpected pe  = new ParamsExpected(params, expected); // <== Main DOES have knowledge of ParamsExpected
 		System.out.println(pe);
 
-		Fizzbuzz cc = new Fizzbuzz(pe.getParams());
-		System.out.println("Result: " + cc.result());
+		ICC cc = new Fizzbuzz(pe.getParams());		// <== Main DOES NOT have knowledge of Fizzbuzz so need
+								//     reflection here also
+
+		System.out.println(ccName + "(" + cc.params() + ") = Result: " + cc.result());
+		System.out.println("Expected: " + pe.getExpected());
 		System.out.println("Result Equals Expected?: " + cc.result().equals(pe.getExpected()));
 		System.out.println();
 	    }

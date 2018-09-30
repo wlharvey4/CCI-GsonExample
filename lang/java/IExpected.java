@@ -1,8 +1,8 @@
 /* lang/java/IExpected.java
    =========================================================================
    CREATED: 2018-09-26
-   UPDATED: 2018-09-28
-   VERSION: 0.1.3
+   UPDATED: 2018-09-30
+   VERSION: 0.1.4
    AUTHOR:  wlharvey4
    ABOUT:   Abstract class AExpected for concrete class Expected
    NOTES:
@@ -22,9 +22,15 @@
    .........................................................................
    2018-09-28T18:35 version 0.1.3
    - refactored so that IExpect now extends IResult
+   .........................................................................
+   2018-09-30T15:15 version 0.1.4
+   - Added methods equals(IExpected) and equals(IResult);
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
-public interface IExpected extends IResult {}
+public interface IExpected extends IResult {
+    public boolean equals(IExpected that);
+    public boolean equals(IResult that);
+}
