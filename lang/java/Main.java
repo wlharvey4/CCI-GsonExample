@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-29T14:25
-   VERSION: 0.2.2
+   UDPATED: 2018-09-29T17:40
+   VERSION: 0.2.3
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -75,6 +75,9 @@
      ParamExpected's method to getParams(); also called cc's method result(),
      but it only returns a null value at this point; nevertheless everything
      still compiles and runs successfully;
+   .........................................................................
+   2018-09-29T17:40 verion 0.2.3
+   - reformatted print statement for Result;
    -------------------------------------------------------------------------
 */
 
@@ -156,7 +159,7 @@ public class Main {
 		System.out.println(pe);
 
 		Fizzbuzz cc = new Fizzbuzz(pe.getParams());
-		System.out.println(cc.result());
+		System.out.println("Result: " + cc.result());
 		System.out.println();
 	    }
 

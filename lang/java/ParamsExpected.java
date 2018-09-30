@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-28
-   VERSION: 0.3.3
+   VERSION: 0.3.4
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -38,6 +38,9 @@
    2018-09-28T17:06 version 0.3.3
    - refactored IE to IParamsExpected
    - no longer implements any interface
+   .........................................................................
+   2018-09-29T17:43 version 0.3.4
+   - reformated toString();
    -------------------------------------------------------------------------
 */
 
@@ -62,6 +65,6 @@ public class ParamsExpected {
     }
 
     public String toString() {
-	return "ParamsExpected: \n\t" + getParams() + "\n\t" + getExpected();
+	return "ParamsExpected: \n\tParams: " + getParams() + "\n\tExpected: " + getExpected();
     }
 }

@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-09-29
-   VERSION: 0.2.5
+   VERSION: 0.2.6
    AUTHOR:  wlharvey4
    ABOUT:   Receives Expected as JSON and converts to Java
    ROOT:    CCI-GsonExample
@@ -40,6 +40,11 @@
    - refactored Scanner check into Result constructor
    - refactored toString() to return getExpected() instead of instance variable
      directly
+   .........................................................................
+   2018-09-29T17:50 version 0.2.6
+   - cleaned up constructor code a bit;
+   - refactored getExpected() to expected();
+   - reformatted toString();
    -------------------------------------------------------------------------
 */
 
@@ -52,26 +57,21 @@ import lang.java.*;
 public class Expected implements IExpected {
     private Result expected;
 
+    /* Expected is called from Main with a JsonElement */
     Gson gson = new Gson();
 
-    /* no args constructor */
     public Expected() {}
 
-    /*
-       fromJson() method can accept a JsonElement as well as a String;
-       the idea is to convert the JsonElement into a Result type
-       (either a FB enum or an int)
-    */
     public Expected(JsonElement expected) {
-	String e = expected.getAsString();
-	this.expected = new Result(e);
+	/* call the Result constructor with a String converted from JSON */
+	this.expected = new Result(expected.getAsString());
     }
 
-    public Result getExpected() {
+    public Result expected() {
 	return this.expected;
     }
 
     public String toString() {
-	return "Expected:\t" + getExpected();
+	return expected().toString();
     }
 }

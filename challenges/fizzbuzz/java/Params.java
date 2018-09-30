@@ -1,8 +1,8 @@
 /* challenges/fizzbuzz/java/Params.java
    =========================================================================
    CREATED: 2018-09-26
-   UPDATED: 2018-09-28
-   VERSION: 0.2.3
+   UPDATED: 2018-09-29
+   VERSION: 0.2.4
    AUTHOR:  wlharvey4
    ABOUT:   Receives Params from JSON and converts them into Java
    ROOT:    CCI-GsonExample
@@ -34,6 +34,9 @@
    - removed static from instance variable n;
    - refactored getParams() into n()
    - also refactored toString() in accordance with n();
+   .........................................................................
+   2018-09-29T17:53 version 0.2.4
+   - reformatted toString()
    -------------------------------------------------------------------------
 */
 
@@ -63,7 +66,7 @@ public class Params implements IParams {
     }
 
     public String toString() {
-	return "Params  :\t" + "n=" + n();
+	return "n = " + n();
     }
 
     /* this is used by gson.fromJson to parse the incoming params
