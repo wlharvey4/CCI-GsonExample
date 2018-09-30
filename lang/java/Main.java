@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-29T17:40
-   VERSION: 0.2.3
+   UDPATED: 2018-09-30T14:24
+   VERSION: 0.2.4
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -78,6 +78,9 @@
    .........................................................................
    2018-09-29T17:40 verion 0.2.3
    - reformatted print statement for Result;
+   .........................................................................
+   2018-09-30T14:24 version 0.2.4
+   - added call to equals() and printed result; code is functioning
    -------------------------------------------------------------------------
 */
 
@@ -160,6 +163,7 @@ public class Main {
 
 		Fizzbuzz cc = new Fizzbuzz(pe.getParams());
 		System.out.println("Result: " + cc.result());
+		System.out.println("Result Equals Expected?: " + cc.result().equals(pe.getExpected()));
 		System.out.println();
 	    }
 

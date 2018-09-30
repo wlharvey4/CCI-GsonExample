@@ -1,8 +1,8 @@
 /* challenge/fizzbuzz/java/Fizzbuzz.java
    =========================================================================
    CREATED: 2018-09-28
-   UPDATED: 2018-09-29
-   VERSION: 0.1.0
+   UPDATED: 2018-09-30
+   VERSION: 0.1.1
    AUTHOR:  wlharvey4
    ABOUT:   fizzbuzz challenge in Java
    ROOT:    CCI-GsonExample
@@ -40,7 +40,11 @@
    - implemented calculate() to obtain the param n;
    .........................................................................
    2018-09-29T15:55 version 0.1.0
-   - fully implemented calculat() method; correctly returns Result value;
+   - fully implemented calculate() method; correctly returns Result value;
+   .........................................................................
+   2018-09-30T14:15 version 0.1.1
+   - refactored all types to interface types, and cast values to private types
+     internally;
    -------------------------------------------------------------------------
 */
 
@@ -54,33 +58,36 @@ public class Fizzbuzz implements ICC {
 
     public Fizzbuzz() {}
 
-    /* constructor must accept an IParams, but then cast it into a local
-       Params for storage and use;
+    /* constructor must accept IParams; can then cast it into a local
+       Params for storage and use; calculate returns an IResult, then
+       casts it into Result for internal storage;
     */
     public Fizzbuzz(IParams p) {
 	this.params = (Params)p;
-	this.result = this.calculate();
+	this.result = (Result)this.calculate();
     }
 
-    public Result calculate() {
-	System.err.println("calculating " + params);
+    public IResult calculate() {
 	int n = params.n();
+
+	//=====================================================================
+	// this is Fizzbuzz code challenge solution
 	boolean fizz = n % 3 == 0;
 	boolean buzz = n % 5 == 0;
 	boolean fizzbuzz = fizz && buzz;
-	Result res;
+	Result result;
 
-	/* this is Fizzbuzz; everything's purpose is to calculate and return this */
 	if (fizz || buzz || fizzbuzz) {
 	    FB fb;
 	    if (fizzbuzz) fb = FB.FIZZBUZZ;
 	    else fb = fizz ? FB.FIZZ : FB.BUZZ;
-	    res = new Result(fb);
+	    result = new Result(fb);
 	} else {
-	    res = new Result(n);
+	    result = new Result(n);
 	}
 
-	return res;
+	return result;
+	//======================================================================
     }
 
     public IParams params() {

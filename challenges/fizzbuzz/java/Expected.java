@@ -1,8 +1,8 @@
 /* challenges/test/java/Expected.java
    =========================================================================
    CREATED: 2018-09-26
-   UPDATED: 2018-09-29
-   VERSION: 0.2.6
+   UPDATED: 2018-09-30
+   VERSION: 0.3.0
    AUTHOR:  wlharvey4
    ABOUT:   Receives Expected as JSON and converts to Java
    ROOT:    CCI-GsonExample
@@ -45,33 +45,25 @@
    - cleaned up constructor code a bit;
    - refactored getExpected() to expected();
    - reformatted toString();
+   .........................................................................
+   2018-09-30T14:10 version 0.3.0
+   - completely gutted Expected and made it a subclass of Result with one
+     constructor and one getter; all other methods are resolved by Result;
    -------------------------------------------------------------------------
 */
 
 package challenges.fizzbuzz.java;
 
-import java.util.Scanner;
-import com.google.gson.*;
+import com.google.gson.JsonElement;
 import lang.java.*;
 
-public class Expected implements IExpected {
-    private Result expected;
-
-    /* Expected is called from Main with a JsonElement */
-    Gson gson = new Gson();
-
-    public Expected() {}
+public class Expected extends Result implements IExpected {
 
     public Expected(JsonElement expected) {
-	/* call the Result constructor with a String converted from JSON */
-	this.expected = new Result(expected.getAsString());
+    	super(expected);
     }
 
-    public Result expected() {
-	return this.expected;
-    }
-
-    public String toString() {
-	return expected().toString();
+    public FizzbuzzResult expected() {
+	return this.result();
     }
 }
