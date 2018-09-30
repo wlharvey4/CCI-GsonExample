@@ -2,9 +2,10 @@
 # #########################################################################
 # CREATED: 2018-09-26
 # UPDATED: 2018-09-29
-# VERSION: 0.3.2
+# VERSION: 0.3.3
 # AUTHOR:  wlharvey4
 # ABOUT:   makefile for CCI-GsonExample program
+# USAGE:   make TARGET | make run CC=<CODE-CHALLENGE>
 # NOTES:
 # CHANGE-LOG
 # .........................................................................
@@ -29,14 +30,18 @@
 # .........................................................................
 # 2018-09-29T08:56 version 0.3.2
 # - added Expected
+# .........................................................................
+# 2018-09-29T18:30 version 0.3.3
+# - added variable CC and target run $(CC)
 # -------------------------------------------------------------------------
 
 MAIN := Main
 CLASSPATH := .:gson-2.8.5.jar
 PACKAGECC := challenges/fizzbuzz/java
 PACKAGEMAIN := lang/java
+CC ?= fizzbuzz
 
-.PHONY : default main Main IParams IExpected IResult ICC Params Result fizzbuzz Fizzbuzz FB clean
+.PHONY : default main Main IParams IExpected IResult ICC Params Result fizzbuzz Fizzbuzz FB clean run
 
 default : Main ParamsExpected IParams IExpected IResult ICC Params Result Expected Fizzbuzz
 
@@ -99,3 +104,6 @@ $(PACKAGECC)/FB.class : $(PACKAGECC)/FB.java
 
 clean :
 	rm -rfv *~ $(PACKAGEMAIN)/*{.class,~} $(PACKAGECC)/*{.class,~}
+
+run : default
+	java -classpath $(CLASSPATH) lang/java/Main $(CC)
