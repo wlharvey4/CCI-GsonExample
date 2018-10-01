@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-28
    UPDATED: 2018-10-01
-   VERSION: 0.2.2
+   VERSION: 0.2.3
    AUTHOR:  wlharvey4
    ABOUT:   Concrete class representing a code challenge Result, which is
    	    equivalent to an Expected type
@@ -54,6 +54,9 @@
    2018-10-01T08:35 version 0.2.2
    - factored in check for null after parsing JSON from ParamsExpected class,
      and before that from Main class;
+   .........................................................................
+   2018-10-01T15:35 version 0.2.3
+   - added clarifying comments
    -------------------------------------------------------------------------
 */
 
@@ -114,6 +117,9 @@ public class Result implements IResult {
 	return result().toString();
     }
 
+
+    /* four methods utilize multiple dynamic dispatching to resolve all invoking
+       objects and associated arguments */
     public boolean equals(IExpected that) {
 	return this.equals((Expected) that);
     }
@@ -130,6 +136,9 @@ public class Result implements IResult {
 	return true;
     }
 
+
+    /* below code is internal to this method and produces dual Fizzbuzz result
+       of integer or Fizzbuzz */
     protected interface FizzbuzzResult {
 	public boolean equals(FizzbuzzResult that);
 	public boolean equals(FB_Result that);
@@ -151,6 +160,8 @@ public class Result implements IResult {
 	    return result().toString();
 	}
 
+
+	// more dispatching methods to continue resolving calls to equals()
 	public boolean equals(FizzbuzzResult that) {
 	    return that.equals(this);
 	}
@@ -177,6 +188,8 @@ public class Result implements IResult {
 	    return result().toString();
 	}
 
+
+	// more dispatching methods to continue resolving calls to equals()
 	public boolean equals(FizzbuzzResult that) {
 	    return that.equals(this);
 	}

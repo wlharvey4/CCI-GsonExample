@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-10-01
-   VERSION: 0.2.5
+   VERSION: 0.2.6
    AUTHOR:  wlharvey4
    ABOUT:   Receives Params from JSON and converts them into Java
    ROOT:    CCI-GsonExample
@@ -41,6 +41,9 @@
    2018-10-01T08:35 version 0.2.5
    - factored in check for null after parsing from ParamsExpected, and before
      that from Main;
+   .........................................................................
+   2018-10-01T15:30 version 0.2.6
+   - refactored code for clarity; added comments
    -------------------------------------------------------------------------
 */
 
@@ -50,29 +53,27 @@ import com.google.gson.*;
 import lang.java.*;
 
 public class Params implements IParams {
-    private int n;
+    private int n;	// <== this instance variable depends upon the individual Code Challenge
 
-    public Params() {}
-
-    Gson gson = new Gson();
+    CCParams ccp; 	// <== private class modeling the Code Challenges' params
 
     /* Constructor with one parameter of type JsonElement */
     public Params(JsonElement params) {
+	Gson gson = new Gson();
 	try {
-	    CCParams ccp = gson.fromJson(params, CCParams.class);
-	    /* once the params has been parsed, this code extracts the params
-	       using the methods provided by CCParam */
+	    // parse and instantiate ccp; obtain individual params and place in instance variables
+	    ccp = gson.fromJson(params, CCParams.class);
 	    if (ccp == null)
 		throw new IllegalStateException("ERROR: the parsing of params: " + params + " returned null");
-	    this.n = ccp.getN();
+
+	    this.n = ccp.getN(); // <== this method depends upon the individual Code Challenge CCParams class
 	}
-	catch (IllegalStateException ise) {
-	    ise.printStackTrace();
+	catch (JsonSyntaxException | IllegalStateException je) {
+	    je.printStackTrace();
 	    System.exit(-1);
 	}
     }
 
-    /* this should probably be a generic array */
     public int n() {
 	return this.n;
     }
@@ -81,13 +82,14 @@ public class Params implements IParams {
 	return "n = " + n();
     }
 
-    /* this is used by gson.fromJson to parse the incoming params
-       and provide a method to extract the params */
+    /* this is used by gson.fromJson to parse the incoming JSON params
+       and provides a getter to extract the params; this will need to
+       be individually made for each Code Challenge */
     private class CCParams {
 	private int n;
 
 	public int getN() {
-	    return n;
+	    return this.n;
 	}
     }
 }

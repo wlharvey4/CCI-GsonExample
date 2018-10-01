@@ -1,8 +1,8 @@
 /* challenges/test/java/Expected.java
    =========================================================================
    CREATED: 2018-09-26
-   UPDATED: 2018-09-30
-   VERSION: 0.3.0
+   UPDATED: 2018-10-01
+   VERSION: 0.3.1
    AUTHOR:  wlharvey4
    ABOUT:   Receives Expected as JSON and converts to Java
    ROOT:    CCI-GsonExample
@@ -49,6 +49,9 @@
    2018-09-30T14:10 version 0.3.0
    - completely gutted Expected and made it a subclass of Result with one
      constructor and one getter; all other methods are resolved by Result;
+   .........................................................................
+   2018-10-01T15:40 version 0.3.1
+   - added clarifying comment
    -------------------------------------------------------------------------
 */
 
@@ -57,6 +60,7 @@ package challenges.fizzbuzz.java;
 import com.google.gson.JsonElement;
 import lang.java.*;
 
+// Expected class is simply a Result class with a different name
 public class Expected extends Result implements IExpected {
 
     public Expected(JsonElement expected) {
