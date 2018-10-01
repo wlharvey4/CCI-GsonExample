@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-10-01T09:15
-   VERSION: 0.2.9
+   UDPATED: 2018-10-01T11:15
+   VERSION: 0.3.0
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    	    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -112,20 +112,26 @@
    .........................................................................
    2018-10-01T09:15 version 0.2.9
    - cleaned up code and comments
+   .........................................................................
+   2018-10-01T10:10 version 0.3.0
+   - successfully used reflection to instantiate code challenge and run tests;
+   - cleaned up and refactored code substantially;
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
-import java.util.Iterator;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import com.google.gson.*;
 
-import challenges.fizzbuzz.java.*;	// <== Main does not have knowledge of this package
-
 public class Main {
+
+    private Main() {}		    // this class should not be instantiated
 
     private static File   ROOT;	     // the ROOT of the module: CCI-GsonExample/
     private static File   ccJSON;    // code challenge JSON data file
@@ -134,19 +140,16 @@ public class Main {
     private static String packageCC; // package designation based upon cc from command-line
     private static String packageLang = "lang.java."; // package designation for Main
 
-    // this class should not be instantiated
-    private Main() {}
-
     static {
 	try { ROOT = new File("./").getCanonicalFile();  }
 	catch (IOException ioe) { ioe.printStackTrace(); }
     }
 
-    /* Static method to Initialize class variables using code challenge from command line */
+    /* Static method to initialize class variables using Code Challenge from command line */
     private static void ccInit(String cc) throws IOException {
 	Main.cc        = cc;
-	Main.packageCC = "challenges." + cc + ".java.";
 	Main.ccName    = cc.substring(0,1).toUpperCase() + cc.substring(1);
+	Main.packageCC = "challenges." + cc + ".java.";
 	Main.ccJSON    = new File(new File(new File(Main.ROOT, "challenges"), Main.cc), Main.cc + ".json");
 	if (!(Main.ccJSON.canRead()||Main.ccJSON.exists())) {
 	    throw new IOException("ERROR: FILE NOT FOUND OR NOT READABLE: " + Main.ccJSON );
@@ -154,12 +157,18 @@ public class Main {
     }
 
     public static void main(String[] args) {
-	ICC            cc;		// code challenge
-	ParamsExpected pe;		// holds parsed JSON data for code challenge
-	JsonParser     parser;
-	JsonObject     paramsExpectedJson;
-	Iterator<JsonElement> iterJson;
+	ICC            icc;		// Code Challenge Interface; contains two required methods:
+					// (1) IParams params() and (2) IResult result()
+					// and a constructor with a required parameter IParams
+	Class<?>       ccClass;		// reflected Class of Code Challenge
+	Constructor    constr;		// reflected Constructor of Code Challenge
+	ParamsExpected paramsExpected;	// holds parsed JSON data for Code Challenge to use
+
+	JsonParser     parser;		// parses the JSON data object found in <cc>.json
+	Iterator<JsonElement> iterJson; // Iterator of an Array of JSON objects (peJson)
 	
+	/* make sure there is a Code Challenge name given on the command line;
+	   if so, initialize Code Challenge variables; */
 	try { Main.ccInit(args[0]); } // args[0] is the code challenge name, i.e. `fizzbuzz'
 	catch (IOException ioe) { ioe.printStackTrace(); System.exit(-1); }
 	catch (NullPointerException | ArrayIndexOutOfBoundsException mce) {
@@ -168,38 +177,68 @@ public class Main {
 	    System.exit(0);
 	}
 
-	try (FileReader ccJsonData = new FileReader(Main.ccJSON)) {
+	try { // wrap the Reflection calls
+	    ccClass = Class.forName(Main.packageCC + Main.ccName);
+	    constr = ccClass.getConstructor(lang.java.IParams.class);
 
-	    parser   = new JsonParser();
-	    iterJson = parser.parse(ccJsonData).getAsJsonArray().iterator();
+	    try (FileReader ccJsonData = new FileReader(Main.ccJSON)) { // wrap the I/O calls
+		parser   = new JsonParser();
+		/* obtain an Iterator over an Array of JSON data objects */
+		iterJson = parser.parse(ccJsonData).getAsJsonArray().iterator();
 
-	    while (iterJson.hasNext()) {
-		paramsExpectedJson = iterJson.next().getAsJsonObject();
-		pe  = new ParamsExpected(paramsExpectedJson);
-		System.out.println(pe);
-		cc = new Fizzbuzz(pe.getParams());		// <== Main DOES NOT have knowledge of Fizzbuzz
+		// iterate over the JSON Array of params and expected values
+		while (iterJson.hasNext()) {
+		    /* obtain the corresponding Params and Expected values for next
+		       Code Challenge invocation */
+		    paramsExpected = new ParamsExpected(iterJson.next().getAsJsonObject());
+		    System.out.println(paramsExpected);
 
-		System.out.println(ccName + "(" + cc.params() + ") = Result: " + cc.result());
-		System.out.println("Expected: " + pe.getExpected());
-		System.out.println("Result Equals Expected?: " + cc.result().equals(pe.getExpected()));
-		System.out.println();
+		    /* use the Reflection Constructor to instantiate a call to the
+		       code challenge with a new set of parameters; this is the HEART
+		       of the solution. */
+		    icc = (ICC) constr.newInstance(paramsExpected.getParams());
+
+		    System.out.println(ccName + "(" + icc.params() + ") = Result: " + icc.result());
+		    System.out.println("Expected: " + paramsExpected.getExpected());
+		    System.out.println("Result Equals Expected?: " +
+				       icc.result().equals(paramsExpected.getExpected()));
+		    System.out.println();
+		}
+
 	    }
-
+	    catch (JsonIOException jioe) {
+		jioe.printStackTrace();
+		System.exit(-1);
+	    }
+	    catch (JsonSyntaxException jse) {
+		jse.printStackTrace();
+		System.exit(-1);
+	    }
+	    catch (JsonParseException jpe) {
+		jpe.printStackTrace();
+		System.exit(-1);
+	    }
+	    catch (IOException ioe) {
+		ioe.printStackTrace();
+		System.exit(-1);
+	    }
 	}
-	catch (JsonIOException jioe) {
-	    jioe.printStackTrace();
+	catch (ClassNotFoundException cnfe) {
+	    cnfe.printStackTrace();
 	    System.exit(-1);
 	}
-	catch (JsonSyntaxException jse) {
-	    jse.printStackTrace();
+	catch (NoSuchMethodException nsme) {
+	    nsme.printStackTrace();
 	    System.exit(-1);
 	}
-	catch (JsonParseException jpe) {
-	    jpe.printStackTrace();
-	    System.exit(-1);
-	}
-	catch (IOException ioe) {
-	    ioe.printStackTrace();
+	catch (
+	       InstantiationException   |
+	       IllegalAccessException   |
+	       IllegalArgumentException |
+	       InvocationTargetException
+	         constructor_exc
+	       ) {
+	    constructor_exc.printStackTrace();
 	    System.exit(-1);
 	}
     }
