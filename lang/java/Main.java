@@ -1,27 +1,38 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-10-01T08:45
-   VERSION: 0.2.8
+   UDPATED: 2018-10-01T09:15
+   VERSION: 0.2.9
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
-   arbitrary construction and initializing an A object (i.e., InputExpected)
-   using JSON elements instead of Strings
+   	    arbitrary construction and initializing an A object (i.e., InputExpected)
+   	    using JSON elements instead of Strings
    NOTES:   Main must be run from the ROOT directory (CCI-GsonExample/)
+   	    Main can be run using the Makefile as `make run CC=<code-challenge>'
+
    COMPONENTS:
+     package lang.java:
+     ------------------
      lang.java.Main.java      --- main method
-     lang.java.IA.java        --- main interface
-     lang.java.AParams.java   --- abstract utility class
-     lang.java.AExpected.java --- abstract utility class
+     lang.java.ICC.java       --- code challenge interface
+     lang.java.ParamsExpected --- code to store JSON data
+     lang.java.IParams.java   --- interface utility to parse and store params
+     lang.java.IResult.java   --- interface utility to parse and store result
+     lang.java.IExpected.java --- interface utility to parse and store expected
 
-     challenges.test.java.A.java        --- main class
-     challenges.test.java.Params.java   --- utility class
-     challenges.test.java.Expected.java --- utility class
+     package challenges.<cc>.java:
+     -----------------------------
+     challenges.<cc>.java.<CC>.java     --- main code challenge class
+     challenges.<cc>.java.Params.java   --- utiltiy class implements interface IParams
+     challenges.<cc>.java.Result.java   --- utiltiy class implements interface IResult
+     challenges.<cc>.java.Expected.java --- subclass of Result and implemnets IExpected
 
-   ROOT:        CCI-GsonExample
+   ROOT:        CCI-GsonExample/
    CLASSPATH:   .:gson-2.8.5.jar
-   compilation: javac -classpath $CLASSPATH lang/java/Main.java
-   usage: ? java lang/java/Main "{\"params\":{\"n\":1,\"m\":2},\"expected\":3}"
+   COMPILATION: javac -classpath $CLASSPATH lang/java/Main.java
+   USAGE:       ? java lang/java/Main <cc>; or alternatively
+                ? make run CC=<cc>
+
    CHANGE-LOG:
    .........................................................................
    2018-09-26T12:30 version 0.1.0
@@ -98,6 +109,9 @@
    .........................................................................
    2018-10-01T08:45 version 0.2.8
    - Combined creation of array and array iterator, since no need for array
+   .........................................................................
+   2018-10-01T09:15 version 0.2.9
+   - cleaned up code and comments
    -------------------------------------------------------------------------
 */
 
@@ -113,40 +127,40 @@ import challenges.fizzbuzz.java.*;	// <== Main does not have knowledge of this p
 
 public class Main {
 
+    private static File   ROOT;	     // the ROOT of the module: CCI-GsonExample/
+    private static File   ccJSON;    // code challenge JSON data file
+    private static String cc; 	     // code challenge from command-line
+    private static String ccName;    // upper-cased code challenge name
+    private static String packageCC; // package designation based upon cc from command-line
+    private static String packageLang = "lang.java."; // package designation for Main
+
+    // this class should not be instantiated
     private Main() {}
 
-    private static File ROOT;
     static {
-	try {
-	    ROOT = new File("./").getCanonicalFile();
-	} catch (IOException ioe) {
-	    ioe.printStackTrace();
-	}
+	try { ROOT = new File("./").getCanonicalFile();  }
+	catch (IOException ioe) { ioe.printStackTrace(); }
     }
 
-    private static String cc; 	  // code challenge from command-line
-    private static String ccName; // upper-cased code challenge name
-    private static String packageLang = "lang.java."; // package designation for Main
-    private static String packageCC; // package designation based upon cc from command-line
-    private static File   ccJSON; // code challenge JSON data file
-
-    /* Initialize class variables using code challenge from command line */
+    /* Static method to Initialize class variables using code challenge from command line */
     private static void ccInit(String cc) throws IOException {
-	Main.cc = cc;
-	Main.ccName = Main.cc.substring(0,1).toUpperCase() + Main.cc.substring(1);
-	Main.packageCC = "challenges." + Main.cc + ".java.";
-
-	Main.ccJSON = new File(new File(new File(Main.ROOT, "challenges"), Main.cc), Main.cc + ".json");
+	Main.cc        = cc;
+	Main.packageCC = "challenges." + cc + ".java.";
+	Main.ccName    = cc.substring(0,1).toUpperCase() + cc.substring(1);
+	Main.ccJSON    = new File(new File(new File(Main.ROOT, "challenges"), Main.cc), Main.cc + ".json");
 	if (!(Main.ccJSON.canRead()||Main.ccJSON.exists())) {
 	    throw new IOException("ERROR: FILE NOT FOUND OR NOT READABLE: " + Main.ccJSON );
 	}
     }
 
-    /* 
-       Example args[0] := {"params":{"n":1,"m":2},"expected":3}
-    */
     public static void main(String[] args) {
-	try { Main.ccInit(args[0]); }
+	ICC            cc;		// code challenge
+	ParamsExpected pe;		// holds parsed JSON data for code challenge
+	JsonParser     parser;
+	JsonObject     paramsExpectedJson;
+	Iterator<JsonElement> iterJson;
+	
+	try { Main.ccInit(args[0]); } // args[0] is the code challenge name, i.e. `fizzbuzz'
 	catch (IOException ioe) { ioe.printStackTrace(); System.exit(-1); }
 	catch (NullPointerException | ArrayIndexOutOfBoundsException mce) {
 	    System.err.println("USAGE: $java lang/java/Main <code-challenge>");
@@ -156,21 +170,14 @@ public class Main {
 
 	try (FileReader ccJsonData = new FileReader(Main.ccJSON)) {
 
-	    Gson gson = new Gson();
-	    JsonParser  parser;
-	    JsonObject  paramsExpectedJson;
-	    Iterator<JsonElement> iterJson;
-
 	    parser   = new JsonParser();
 	    iterJson = parser.parse(ccJsonData).getAsJsonArray().iterator();
 
 	    while (iterJson.hasNext()) {
 		paramsExpectedJson = iterJson.next().getAsJsonObject();
-
-		ParamsExpected pe  = new ParamsExpected(paramsExpectedJson);
+		pe  = new ParamsExpected(paramsExpectedJson);
 		System.out.println(pe);
-
-		ICC cc = new Fizzbuzz(pe.getParams());		// <== Main DOES NOT have knowledge of Fizzbuzz
+		cc = new Fizzbuzz(pe.getParams());		// <== Main DOES NOT have knowledge of Fizzbuzz
 
 		System.out.println(ccName + "(" + cc.params() + ") = Result: " + cc.result());
 		System.out.println("Expected: " + pe.getExpected());
@@ -202,13 +209,3 @@ public class Main {
 	String expected;
     }
 }
-
-/* Produces:
-
-?java Main "{\"params\":{\"n\":1,\"m\":2},\"expected\":3}"
-Params: {"n":1,"m":2}
-Expected: 3
-A:
-        Params  n: 1, m: 2
-        Expected expected: 3
-*/
