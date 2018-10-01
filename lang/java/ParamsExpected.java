@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-10-01
-   VERSION: 0.3.5
+   VERSION: 0.3.6
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -44,12 +44,18 @@
    .........................................................................
    2018-10-01T07:30 version 0.3.5
    - factored in Params() and Expected() from Main class
+   .........................................................................
+   2018-10-01T07:45 version 0.3.6
+   - factored in the calling of ParamsExpected with a single JSON object
+     containing both `params' and `expected' objects, and parsing the JSON
+     here instead of in Main;
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import challenges.fizzbuzz.java.*;	// <== ParamsExpected DOES NOT have knowledge of this package
 
 public class ParamsExpected {
@@ -57,11 +63,22 @@ public class ParamsExpected {
     private IExpected expected;
 
     public ParamsExpected() {}
-    public ParamsExpected(JsonElement paramsJson, JsonElement expectedJson) {
+    public ParamsExpected(JsonObject paramsExpectedJson) {
+	try {
+	    JsonElement paramsJson   = paramsExpectedJson.get("params");
+	    JsonElement expectedJson = paramsExpectedJson.get("expected");
 
-	this.params   = new Params(paramsJson);		// <== Main DOES NOT have knowledge
-	this.expected = new Expected(expectedJson);	// <== of these two types, so need reflection here
+	    if (paramsJson == null || expectedJson == null)
+		throw new IllegalStateException
+		    ("ERROR: params (" + paramsJson + ") or expected (" + expectedJson + ") is null");
 
+	    this.params   = new Params(paramsJson);		// <== Main DOES NOT have knowledge
+	    this.expected = new Expected(expectedJson);	// <== of these two types, so need reflection here
+	}
+	catch (IllegalStateException ise) {
+	    ise.printStackTrace();
+	    System.exit(-1);
+	}
     }
 
     public IParams getParams() {

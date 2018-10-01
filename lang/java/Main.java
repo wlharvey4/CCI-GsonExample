@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-10-01T07:30
-   VERSION: 0.2.6
+   UDPATED: 2018-10-01T07:45
+   VERSION: 0.2.7
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -90,6 +90,11 @@
    .........................................................................
    2018-10-01T07:30 version 0.2.6
    - Factored out Params() and Expected() into ParamsExpected();
+   .........................................................................
+   2018-10-01T07:45 version 0.2.7
+   - Factored out parsing of objJson into ParamsExpected; called ParamsExpected()
+     with a single line of JSON data containing both `params' and `expected'
+     objects;
    -------------------------------------------------------------------------
 */
 
@@ -150,9 +155,8 @@ public class Main {
 
 	    Gson gson = new Gson();
 	    JsonParser  parser;
-	    JsonObject  objJson;
+	    JsonObject  paramsExpectedJson;
 	    JsonArray   ccJsonArr;
-	    JsonElement paramsJson, expectedJson;
 	    Iterator<JsonElement> iterJson;
 
 	    parser    = new JsonParser();
@@ -160,15 +164,9 @@ public class Main {
 	    iterJson  = ccJsonArr.iterator();
 
 	    while (iterJson.hasNext()) {
-		objJson      = iterJson.next().getAsJsonObject();
-		paramsJson   = objJson.get("params");
-		expectedJson = objJson.get("expected");
+		paramsExpectedJson = iterJson.next().getAsJsonObject();
 
-		if (paramsJson == null || expectedJson == null)
-		    throw new IllegalStateException
-			("ERROR: params (" + paramsJson + ") or expected (" + expectedJson + ") is null");
-
-		ParamsExpected pe  = new ParamsExpected(paramsJson, expectedJson);
+		ParamsExpected pe  = new ParamsExpected(paramsExpectedJson);
 		System.out.println(pe);
 
 		ICC cc = new Fizzbuzz(pe.getParams());		// <== Main DOES NOT have knowledge of Fizzbuzz
@@ -190,10 +188,6 @@ public class Main {
 	}
 	catch (JsonParseException jpe) {
 	    jpe.printStackTrace();
-	    System.exit(-1);
-	}
-	catch (IllegalStateException ise) {
-	    ise.printStackTrace();
 	    System.exit(-1);
 	}
 	catch (IOException ioe) {
