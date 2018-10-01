@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-10-01T11:15
-   VERSION: 0.3.0
+   UDPATED: 2018-10-01T12:10
+   VERSION: 0.3.1
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    	    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -116,6 +116,10 @@
    2018-10-01T10:10 version 0.3.0
    - successfully used reflection to instantiate code challenge and run tests;
    - cleaned up and refactored code substantially;
+   .........................................................................
+   2018-10-01T12:10 version 0.3.1
+   - refactored packageCC to be protected so ParamsExpected can access it;
+   - made some small code changes;
    -------------------------------------------------------------------------
 */
 
@@ -131,14 +135,14 @@ import com.google.gson.*;
 
 public class Main {
 
-    private Main() {}		    // this class should not be instantiated
+    private Main() {}		       // this class should not be instantiated
 
-    private static File   ROOT;	     // the ROOT of the module: CCI-GsonExample/
-    private static File   ccJSON;    // code challenge JSON data file
-    private static String cc; 	     // code challenge from command-line
-    private static String ccName;    // upper-cased code challenge name
-    private static String packageCC; // package designation based upon cc from command-line
-    private static String packageLang = "lang.java."; // package designation for Main
+    private   static File   ROOT;      // the ROOT of the module: CCI-GsonExample/
+    private   static File   ccJSON;    // code challenge JSON data file
+    private   static String cc;	       // code challenge from command-line
+    private   static String ccName;    // upper-cased code challenge name
+    protected static String packageCC; // package designation based upon cc from command-line
+    private   static String packageLang = "lang.java."; // package designation for Main
 
     static {
 	try { ROOT = new File("./").getCanonicalFile();  }
@@ -179,7 +183,7 @@ public class Main {
 
 	try { // wrap the Reflection calls
 	    ccClass = Class.forName(Main.packageCC + Main.ccName);
-	    constr = ccClass.getConstructor(lang.java.IParams.class);
+	    constr = ccClass.getConstructor(IParams.class);
 
 	    try (FileReader ccJsonData = new FileReader(Main.ccJSON)) { // wrap the I/O calls
 		parser   = new JsonParser();
@@ -235,10 +239,9 @@ public class Main {
 	       InstantiationException   |
 	       IllegalAccessException   |
 	       IllegalArgumentException |
-	       InvocationTargetException
-	         constructor_exc
+	       InvocationTargetException constr_exc
 	       ) {
-	    constructor_exc.printStackTrace();
+	    constr_exc.printStackTrace();
 	    System.exit(-1);
 	}
     }

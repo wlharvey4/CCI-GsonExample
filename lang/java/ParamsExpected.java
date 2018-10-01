@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-10-01
-   VERSION: 0.3.7
+   VERSION: 0.4.0
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -52,32 +52,77 @@
    .........................................................................
    2018-10-01T08:24 version 0.3.7
    - factored out checks for null into Params and Result classes;
+   .........................................................................
+   2018-10-0112:10 version 0.4.0
+   - factored in Reflection; factored out references to challenges.fizzbuzz;
+     code runs successfully using Reflection;
    -------------------------------------------------------------------------
 */
 
 package lang.java;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import challenges.fizzbuzz.java.*;	// <== ParamsExpected DOES NOT have knowledge of this package
 
 public class ParamsExpected {
     private IParams params;
     private IExpected expected;
 
+    private static final String PARAMS   = "Params";
+    private static final String EXPECTED = "Expected";
+
+    JsonElement paramsJson;	// JSON data object for "params" key
+    JsonElement expectedJson;	// JSON data object for "expected" key
+
+    Class<?> paramsClass;	// Reflected Class object for Params class
+    Class<?> expectedClass;	// Reflected Class object for Expected class
+    Constructor paramsConst;	// Reflected Constructor for Params class
+    Constructor expectedConst;	// Reflected Constructor for Expected class
+
     public ParamsExpected() {}
     public ParamsExpected(JsonObject paramsExpectedJson) {
-	JsonElement paramsJson   = paramsExpectedJson.get("params");
-	JsonElement expectedJson = paramsExpectedJson.get("expected");
+	// separate the two objects in the JSON data
+	paramsJson   = paramsExpectedJson.get("params");
+	expectedJson = paramsExpectedJson.get("expected");
 
-	this.params   = new Params(paramsJson);		// <== Main DOES NOT have knowledge
-	this.expected = new Expected(expectedJson);	// <== of these two types, so need reflection here
+	try {
+	    /* using Reflection instantiate the Params and Expected classes
+	       for the Code Challenge */
+	    paramsClass   = Class.forName(Main.packageCC + ParamsExpected.PARAMS);
+	    expectedClass = Class.forName(Main.packageCC + ParamsExpected.EXPECTED);
+	    paramsConst   = paramsClass.getConstructor(JsonElement.class);
+	    expectedConst = expectedClass.getConstructor(JsonElement.class);
+
+	    this.params   = (IParams)   paramsConst.newInstance(paramsJson);
+	    this.expected = (IExpected) expectedConst.newInstance(expectedJson);
+	}
+	catch (ClassNotFoundException cnfe) {
+	    cnfe.printStackTrace();
+	    System.exit(-1);
+	}
+	catch (NoSuchMethodException nsme) {
+	    nsme.printStackTrace();
+	    System.exit(-1);
+	}
+	catch (
+	       InstantiationException   |
+	       IllegalAccessException   |
+	       IllegalArgumentException |
+	       InvocationTargetException constr_exc
+	       ) {
+	    constr_exc.printStackTrace();
+	    System.exit(-1);
+	}
     }
 
+    // required getter method for params
     public IParams getParams() {
 	return this.params;
     }
 
+    // required getter method for expected
     public IExpected getExpected() {
 	return this.expected;
     }
