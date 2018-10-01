@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-10-01T07:45
-   VERSION: 0.2.7
+   UDPATED: 2018-10-01T08:45
+   VERSION: 0.2.8
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -95,6 +95,9 @@
    - Factored out parsing of objJson into ParamsExpected; called ParamsExpected()
      with a single line of JSON data containing both `params' and `expected'
      objects;
+   .........................................................................
+   2018-10-01T08:45 version 0.2.8
+   - Combined creation of array and array iterator, since no need for array
    -------------------------------------------------------------------------
 */
 
@@ -156,12 +159,10 @@ public class Main {
 	    Gson gson = new Gson();
 	    JsonParser  parser;
 	    JsonObject  paramsExpectedJson;
-	    JsonArray   ccJsonArr;
 	    Iterator<JsonElement> iterJson;
 
-	    parser    = new JsonParser();
-	    ccJsonArr = parser.parse(ccJsonData).getAsJsonArray();
-	    iterJson  = ccJsonArr.iterator();
+	    parser   = new JsonParser();
+	    iterJson = parser.parse(ccJsonData).getAsJsonArray().iterator();
 
 	    while (iterJson.hasNext()) {
 		paramsExpectedJson = iterJson.next().getAsJsonObject();
