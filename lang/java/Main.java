@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-09-30T14:45
-   VERSION: 0.2.5
+   UDPATED: 2018-10-01T07:30
+   VERSION: 0.2.6
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -87,6 +87,9 @@
    - added comments to calls to Params and Expected constructors;
    - refactored Fizzbuzz type to ICC type; marked three areas that will need
      reflection for code to work dynamically
+   .........................................................................
+   2018-10-01T07:30 version 0.2.6
+   - Factored out Params() and Expected() into ParamsExpected();
    -------------------------------------------------------------------------
 */
 
@@ -97,7 +100,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import com.google.gson.*;
-import challenges.fizzbuzz.java.*;
+
+import challenges.fizzbuzz.java.*;	// <== Main does not have knowledge of this package
 
 public class Main {
 
@@ -164,14 +168,10 @@ public class Main {
 		    throw new IllegalStateException
 			("ERROR: params (" + paramsJson + ") or expected (" + expectedJson + ") is null");
 
-		IParams params     = new Params(paramsJson);		// <== Main DOES NOT have knowledge
-		IExpected expected = new Expected(expectedJson);	// <== of these two types, so need reflection here
-
-		ParamsExpected pe  = new ParamsExpected(params, expected); // <== Main DOES have knowledge of ParamsExpected
+		ParamsExpected pe  = new ParamsExpected(paramsJson, expectedJson);
 		System.out.println(pe);
 
-		ICC cc = new Fizzbuzz(pe.getParams());		// <== Main DOES NOT have knowledge of Fizzbuzz so need
-								//     reflection here also
+		ICC cc = new Fizzbuzz(pe.getParams());		// <== Main DOES NOT have knowledge of Fizzbuzz
 
 		System.out.println(ccName + "(" + cc.params() + ") = Result: " + cc.result());
 		System.out.println("Expected: " + pe.getExpected());

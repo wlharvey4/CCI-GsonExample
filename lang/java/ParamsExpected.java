@@ -1,8 +1,8 @@
 /* lang/java/ParamsExpected.java
    =========================================================================
    CREATED: 2018-09-26
-   UPDATED: 2018-09-28
-   VERSION: 0.3.4
+   UPDATED: 2018-10-01
+   VERSION: 0.3.5
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -41,19 +41,27 @@
    .........................................................................
    2018-09-29T17:43 version 0.3.4
    - reformated toString();
+   .........................................................................
+   2018-10-01T07:30 version 0.3.5
+   - factored in Params() and Expected() from Main class
    -------------------------------------------------------------------------
 */
 
 package lang.java;
+
+import com.google.gson.JsonElement;
+import challenges.fizzbuzz.java.*;	// <== ParamsExpected DOES NOT have knowledge of this package
 
 public class ParamsExpected {
     private IParams params;
     private IExpected expected;
 
     public ParamsExpected() {}
-    public ParamsExpected(IParams p, IExpected e) {
-	this.params = p;
-	this.expected = e;
+    public ParamsExpected(JsonElement paramsJson, JsonElement expectedJson) {
+
+	this.params   = new Params(paramsJson);		// <== Main DOES NOT have knowledge
+	this.expected = new Expected(expectedJson);	// <== of these two types, so need reflection here
+
     }
 
     public IParams getParams() {
