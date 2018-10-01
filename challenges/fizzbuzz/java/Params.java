@@ -1,8 +1,8 @@
 /* challenges/fizzbuzz/java/Params.java
    =========================================================================
    CREATED: 2018-09-26
-   UPDATED: 2018-09-29
-   VERSION: 0.2.4
+   UPDATED: 2018-10-01
+   VERSION: 0.2.5
    AUTHOR:  wlharvey4
    ABOUT:   Receives Params from JSON and converts them into Java
    ROOT:    CCI-GsonExample
@@ -37,6 +37,10 @@
    .........................................................................
    2018-09-29T17:53 version 0.2.4
    - reformatted toString()
+   .........................................................................
+   2018-10-01T08:35 version 0.2.5
+   - factored in check for null after parsing from ParamsExpected, and before
+     that from Main;
    -------------------------------------------------------------------------
 */
 
@@ -54,10 +58,18 @@ public class Params implements IParams {
 
     /* Constructor with one parameter of type JsonElement */
     public Params(JsonElement params) {
-	CCParams ccp = gson.fromJson(params, CCParams.class);
-	/* once the params has been parsed, this code extracts the params
-	   using the methods provided by CCParam */
-	this.n = ccp.getN();
+	try {
+	    CCParams ccp = gson.fromJson(params, CCParams.class);
+	    /* once the params has been parsed, this code extracts the params
+	       using the methods provided by CCParam */
+	    if (ccp == null)
+		throw new IllegalStateException("ERROR: the parsing of params: " + params + " returned null");
+	    this.n = ccp.getN();
+	}
+	catch (IllegalStateException ise) {
+	    ise.printStackTrace();
+	    System.exit(-1);
+	}
     }
 
     /* this should probably be a generic array */

@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-10-01
-   VERSION: 0.3.6
+   VERSION: 0.3.7
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -49,6 +49,9 @@
    - factored in the calling of ParamsExpected with a single JSON object
      containing both `params' and `expected' objects, and parsing the JSON
      here instead of in Main;
+   .........................................................................
+   2018-10-01T08:24 version 0.3.7
+   - factored out checks for null into Params and Result classes;
    -------------------------------------------------------------------------
 */
 
@@ -64,21 +67,11 @@ public class ParamsExpected {
 
     public ParamsExpected() {}
     public ParamsExpected(JsonObject paramsExpectedJson) {
-	try {
-	    JsonElement paramsJson   = paramsExpectedJson.get("params");
-	    JsonElement expectedJson = paramsExpectedJson.get("expected");
+	JsonElement paramsJson   = paramsExpectedJson.get("params");
+	JsonElement expectedJson = paramsExpectedJson.get("expected");
 
-	    if (paramsJson == null || expectedJson == null)
-		throw new IllegalStateException
-		    ("ERROR: params (" + paramsJson + ") or expected (" + expectedJson + ") is null");
-
-	    this.params   = new Params(paramsJson);		// <== Main DOES NOT have knowledge
-	    this.expected = new Expected(expectedJson);	// <== of these two types, so need reflection here
-	}
-	catch (IllegalStateException ise) {
-	    ise.printStackTrace();
-	    System.exit(-1);
-	}
+	this.params   = new Params(paramsJson);		// <== Main DOES NOT have knowledge
+	this.expected = new Expected(expectedJson);	// <== of these two types, so need reflection here
     }
 
     public IParams getParams() {

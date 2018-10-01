@@ -1,8 +1,8 @@
 /* challenges/fizzbuzz/java/Result.java
    =========================================================================
    CREATED: 2018-09-28
-   UPDATED: 2018-09-30
-   VERSION: 0.2.1
+   UPDATED: 2018-10-01
+   VERSION: 0.2.2
    AUTHOR:  wlharvey4
    ABOUT:   Concrete class representing a code challenge Result, which is
    	    equivalent to an Expected type
@@ -50,6 +50,10 @@
      it;
    - added multiple dispatching equals() in FizzbuzzResult and its subclasses
      to continue dispatching on calls to equals() in Result;
+   .........................................................................
+   2018-10-01T08:35 version 0.2.2
+   - factored in check for null after parsing JSON from ParamsExpected class,
+     and before that from Main class;
    -------------------------------------------------------------------------
 */
 
@@ -66,20 +70,29 @@ public class Result implements IResult {
 
     /* this constructor is used by Expected while iterating over JSON data */
     public Result(JsonElement expectedJson) {
-	String expected = expectedJson.getAsString();
+	try {
+	    String expected = expectedJson.getAsString();
+	    if (expected == null)
+		throw new IllegalStateException("ERROR: parsing of expectedJson: " + expectedJson + " produced null");
 
-	/* need Scanner to check whether the incoming result is an Integer or FB */
-	Scanner intScanner = new Scanner(expected);
+	    /* need Scanner to check whether the incoming result is an Integer or FB */
+	    Scanner intScanner = new Scanner(expected);
 
-	if (intScanner.hasNextInt()) {
-	    this.result = new Int_Result(intScanner.nextInt());
-	} else {
-	    try {
+	    if (intScanner.hasNextInt()) {
+		this.result = new Int_Result(intScanner.nextInt());
+	    } else {
 		this.result = new FB_Result(FB.valueOf(expected.toUpperCase()));
-	    } catch (IllegalArgumentException iae) {
-		System.err.println("ERROR: result: `" + expected + "' does not have an FB value");
-		System.exit(-1);
+		if (this.result == null)
+		    throw new IllegalArgumentException("ERROR: result: `" + expected + "' does not have an FB value");
 	    }
+	}
+	catch (IllegalArgumentException iae) {
+	    iae.printStackTrace();
+	    System.exit(-1);
+	}	
+	catch (IllegalStateException ise) {
+	    ise.printStackTrace();
+	    System.exit(-1);
 	}
     }
 
