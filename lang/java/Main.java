@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-10-01T13:00
-   VERSION: 0.3.2
+   UDPATED: 2018-10-01T13:50
+   VERSION: 0.3.3
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    	    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -17,7 +17,7 @@
    	    Main can be run using the Makefile as `make run CC=<code-challenge>'
 
    COMPONENTS:
-     package lang.java:
+     PACKAGE lang.java:
      ------------------
      lang.java.Main.java      --- main method (test runnr)
      lang.java.ICC.java       --- code challenge interface; 3 required methods:
@@ -30,7 +30,7 @@
      lang.java.IExpected.java --- interface utility to parse and store expected;
      				  concrete implementation is a subclass of Result;
 
-     package challenges.<cc>.java:
+     PACKAGE challenges.<cc>.java:
      -----------------------------
      challenges.<cc>.java.<CC>.java     --- Code Challenge class implements ICC
      challenges.<cc>.java.Params.java   --- utiltiy class implements IParams
@@ -130,6 +130,11 @@
    - create ccPackageName in ccInit() code;
    - moved creation of Params and Expected package names into Main's
      ccInit(), using protected keyword for proper access privilege;
+   .........................................................................
+   2018-10-01T13:50 version 0.3.3
+   - refactored error catching for JSON file
+   - refactored name of constructor for clarity;
+   - removed unnecessary local variable for package lang.java;
    -------------------------------------------------------------------------
 */
 
@@ -148,7 +153,10 @@ public class Main {
     private Main() {}		       		 // this class should not be instantiated
 
     private   static File   ROOT;      		 // the ROOT of the module: CCI-GsonExample/
-    private   static String packageLang = "lang.java."; // package designation for Main and interfaces
+    static {
+	try { ROOT = new File("./").getCanonicalFile();  }
+	catch (IOException ioe) { ioe.printStackTrace(); }
+    }
 
     // these names are used by Reflection code
     private   static String cc;			 // code challenge from command-line
@@ -159,13 +167,8 @@ public class Main {
     protected static String expectedPackageName; // fully qualified Expected package name
     private   static File   ccJSON;    		 // code challenge JSON data file
 
-    static {
-	try { ROOT = new File("./").getCanonicalFile();  }
-	catch (IOException ioe) { ioe.printStackTrace(); }
-    }
-
     /* Static method to initialize class variables using Code Challenge from command line */
-    private static void ccInit(String cc) throws IOException {
+    private static void ccInit(String cc) {
 	Main.cc                  = cc;
 	Main.ccName              = cc.substring(0,1).toUpperCase() + cc.substring(1);
 	Main.ccPackage           = "challenges." + cc + ".java.";
@@ -173,10 +176,16 @@ public class Main {
 	Main.paramsPackageName   = Main.ccPackage + "Params";
 	Main.expectedPackageName = Main.ccPackage + "Expected";
 
-	Main.ccJSON    = new File(new File(new File(Main.ROOT, "challenges"), Main.cc), Main.cc + ".json");
+	try {
+	    Main.ccJSON    = new File(new File(new File(Main.ROOT, "challenges"), Main.cc), Main.cc + ".json");
 
-	if (!(Main.ccJSON.canRead()||Main.ccJSON.exists())) {
-	    throw new IOException("ERROR: FILE NOT FOUND OR NOT READABLE: " + Main.ccJSON );
+	    if (!(Main.ccJSON.canRead() || Main.ccJSON.exists())) {
+		throw new IOException("ERROR: FILE NOT FOUND OR NOT READABLE: " + Main.ccJSON );
+	    }
+	}
+	catch (NullPointerException | IOException ioe) {
+	    ioe.printStackTrace();
+	    System.exit(-1);
 	}
     }
 
@@ -185,7 +194,7 @@ public class Main {
 					// (1) IParams params() and (2) IResult result()
 					// and a constructor with a required parameter IParams
 	Class<?>       ccClass;		// reflected Class of Code Challenge
-	Constructor    constr;		// reflected Constructor of Code Challenge
+	Constructor    ccConstr;	// reflected Constructor of Code Challenge
 	ParamsExpected paramsExpected;	// holds parsed JSON data for Code Challenge to use
 
 	JsonParser     parser;		// parses the JSON data object found in <cc>.json
@@ -194,7 +203,6 @@ public class Main {
 	/* make sure there is a Code Challenge name given on the command line;
 	   if so, initialize Code Challenge variables; */
 	try { Main.ccInit(args[0]); } // args[0] is the code challenge name, i.e. `fizzbuzz'
-	catch (IOException ioe) { ioe.printStackTrace(); System.exit(-1); }
 	catch (NullPointerException | ArrayIndexOutOfBoundsException mce) {
 	    System.err.println("USAGE: $java lang/java/Main <code-challenge>");
 	    mce.printStackTrace();
@@ -203,7 +211,7 @@ public class Main {
 
 	try { // wrap the Reflection calls
 	    ccClass = Class.forName(Main.ccPackageName);
-	    constr = ccClass.getConstructor(IParams.class);
+	    ccConstr = ccClass.getConstructor(IParams.class);
 
 	    try (FileReader ccJsonData = new FileReader(Main.ccJSON)) { // wrap the I/O calls
 		parser   = new JsonParser();
@@ -220,7 +228,7 @@ public class Main {
 		    /* use the Reflection Constructor to instantiate a call to the
 		       code challenge with a new set of parameters; this is the HEART
 		       of the solution. */
-		    icc = (ICC) constr.newInstance(paramsExpected.getParams());
+		    icc = (ICC) ccConstr.newInstance(paramsExpected.getParams());
 
 		    System.out.println(ccName + "(" + icc.params() + ") = Result: " + icc.result());
 		    System.out.println("Expected: " + paramsExpected.getExpected());
