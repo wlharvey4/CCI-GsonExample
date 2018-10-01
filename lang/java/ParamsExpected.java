@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-10-01
-   VERSION: 0.4.0
+   VERSION: 0.4.1
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -53,9 +53,13 @@
    2018-10-01T08:24 version 0.3.7
    - factored out checks for null into Params and Result classes;
    .........................................................................
-   2018-10-0112:10 version 0.4.0
+   2018-10-01T12:10 version 0.4.0
    - factored in Reflection; factored out references to challenges.fizzbuzz;
      code runs successfully using Reflection;
+   .........................................................................
+   2018-10-01T13:00 version 0.4.1
+   - factored out unnecessary local variables; 
+   - moved construction of package names into Main's ccInit() method;
    -------------------------------------------------------------------------
 */
 
@@ -70,40 +74,23 @@ public class ParamsExpected {
     private IParams params;
     private IExpected expected;
 
-    private static final String PARAMS   = "Params";
-    private static final String EXPECTED = "Expected";
-
-    JsonElement paramsJson;	// JSON data object for "params" key
-    JsonElement expectedJson;	// JSON data object for "expected" key
-
-    Class<?> paramsClass;	// Reflected Class object for Params class
-    Class<?> expectedClass;	// Reflected Class object for Expected class
-    Constructor paramsConst;	// Reflected Constructor for Params class
-    Constructor expectedConst;	// Reflected Constructor for Expected class
-
     public ParamsExpected() {}
     public ParamsExpected(JsonObject paramsExpectedJson) {
-	// separate the two objects in the JSON data
-	paramsJson   = paramsExpectedJson.get("params");
-	expectedJson = paramsExpectedJson.get("expected");
 
+	/* using Reflection instantiate ParamsExpected instance variables
+	   using the Code Challenge utility classes Params and Expected */
 	try {
-	    /* using Reflection instantiate the Params and Expected classes
-	       for the Code Challenge */
-	    paramsClass   = Class.forName(Main.packageCC + ParamsExpected.PARAMS);
-	    expectedClass = Class.forName(Main.packageCC + ParamsExpected.EXPECTED);
-	    paramsConst   = paramsClass.getConstructor(JsonElement.class);
-	    expectedConst = expectedClass.getConstructor(JsonElement.class);
-
-	    this.params   = (IParams)   paramsConst.newInstance(paramsJson);
-	    this.expected = (IExpected) expectedConst.newInstance(expectedJson);
+	    this.params = (IParams) Class.
+		forName(Main.paramsPackageName).
+		getConstructor(JsonElement.class).
+		newInstance(paramsExpectedJson.get("params"));
+	    this.expected = (IExpected) Class.
+		forName(Main.expectedPackageName).
+		getConstructor(JsonElement.class).
+		newInstance(paramsExpectedJson.get("expected"));
 	}
-	catch (ClassNotFoundException cnfe) {
-	    cnfe.printStackTrace();
-	    System.exit(-1);
-	}
-	catch (NoSuchMethodException nsme) {
-	    nsme.printStackTrace();
+	catch (ClassNotFoundException | NoSuchMethodException e) {
+	    e.printStackTrace();
 	    System.exit(-1);
 	}
 	catch (
