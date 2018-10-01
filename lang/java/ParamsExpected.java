@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-10-01
-   VERSION: 0.4.1
+   VERSION: 0.4.2
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -60,6 +60,12 @@
    2018-10-01T13:00 version 0.4.1
    - factored out unnecessary local variables; 
    - moved construction of package names into Main's ccInit() method;
+   .........................................................................
+   2018-10-01T14:10 version 0.4.2
+   - added instance variable IResult result to store result for this Code
+     Challenge test;
+   - added class variables count and tally to keep a count of code challenge
+     tests run and a tally of the count of correct Code Challenge tests;
    -------------------------------------------------------------------------
 */
 
@@ -71,8 +77,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class ParamsExpected {
-    private IParams params;
+    private IParams   params;
     private IExpected expected;
+    private IResult   result;
+
+    private static int ccCount; // count of Code Challenge tests run
+    private static int tally;   // tally of correct Code Challenge tests
 
     public ParamsExpected() {}
     public ParamsExpected(JsonObject paramsExpectedJson) {
@@ -112,6 +122,14 @@ public class ParamsExpected {
     // required getter method for expected
     public IExpected getExpected() {
 	return this.expected;
+    }
+
+    public void setResult(IResult result) {
+	this.result = result;
+	ParamsExpected.ccCount++;
+	if (result.equals(expected)) {
+	    ParamsExpected.tally++;
+	}
     }
 
     public String toString() {
