@@ -2,7 +2,7 @@
    =========================================================================
    CREATED: 2018-09-26
    UPDATED: 2018-10-01
-   VERSION: 0.4.2
+   VERSION: 0.4.3
    AUTHOR:  wlharvey4
    ABOUT:   Receives and stores Params and Expected from JSON file
    ROOT:    CCI-GsonExample
@@ -66,6 +66,12 @@
      Challenge test;
    - added class variables count and tally to keep a count of code challenge
      tests run and a tally of the count of correct Code Challenge tests;
+   .........................................................................
+   2018-10-01T15:00 version 0.4.3
+   - changed setResult to reportResult() and count to ccCount()
+   - added getter tally() for tally class variable;
+   - added getter ccCount() for count class variable;
+   - added method reportError() to report an indiviual error result;
    -------------------------------------------------------------------------
 */
 
@@ -124,15 +130,36 @@ public class ParamsExpected {
 	return this.expected;
     }
 
-    public void setResult(IResult result) {
+    public void reportResult(IResult result) {
 	this.result = result;
 	ParamsExpected.ccCount++;
 	if (result.equals(expected)) {
 	    ParamsExpected.tally++;
+	} else {
+	    this.reportError();
 	}
+    }
+
+    public IResult result() {
+	return this.result;
+    }
+
+    private void reportError() {
+	System.out.println("ERROR:\n=====");
+	System.out.println(Main.ccName + "(" + this.getParams() + ") produced " +
+			   this.result() + "\nbut expected " + getExpected());
+	System.out.println();
     }
 
     public String toString() {
 	return "ParamsExpected: \n\tParams: " + getParams() + "\n\tExpected: " + getExpected();
+    }
+
+    public static int ccCount() {
+	return ParamsExpected.ccCount;
+    }
+
+    public static int tally() {
+	return ParamsExpected.tally;
     }
 }

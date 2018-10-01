@@ -1,8 +1,8 @@
 # Makefile
 # #########################################################################
 # CREATED: 2018-09-26
-# UPDATED: 2018-09-29
-# VERSION: 0.3.3
+# UPDATED: 2018-10-01
+# VERSION: 0.3.4
 # AUTHOR:  wlharvey4
 # ABOUT:   makefile for CCI-GsonExample program
 # USAGE:   make TARGET | make run CC=<CODE-CHALLENGE>
@@ -33,6 +33,9 @@
 # .........................................................................
 # 2018-09-29T18:30 version 0.3.3
 # - added variable CC and target run $(CC)
+# .........................................................................
+# 2018-10-01T15:05 version 0.3.4
+# - made main compilation and run targets silent
 # -------------------------------------------------------------------------
 
 MAIN := Main
@@ -49,7 +52,7 @@ main : Main
 Main : $(PACKAGEMAIN)/Main.class
 
 $(PACKAGEMAIN)/Main.class : $(PACKAGEMAIN)/Main.java
-	javac -classpath $(CLASSPATH) $(PACKAGEMAIN)/Main.java
+	@javac -classpath $(CLASSPATH) $(PACKAGEMAIN)/Main.java
 
 ParamsExpected : $(PACKAGEMAIN)/ParamsExpected.class
 
@@ -106,4 +109,4 @@ clean :
 	rm -rfv *~ $(PACKAGEMAIN)/*{.class,~} $(PACKAGECC)/*{.class,~}
 
 run : default
-	java -classpath $(CLASSPATH) lang/java/Main $(CC)
+	@java -classpath $(CLASSPATH) lang/java/Main $(CC)

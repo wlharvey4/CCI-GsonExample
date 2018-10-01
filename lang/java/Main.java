@@ -1,8 +1,8 @@
 /* lang/java/Main.java
    =========================================================================
    CREATED: 2018-09-26T12:30
-   UDPATED: 2018-10-01T13:50
-   VERSION: 0.3.3
+   UDPATED: 2018-10-01T15:00
+   VERSION: 0.3.4
    AUTHOR:  wlharvey4
    ABOUT:   Example setup for reading in JSON objects of "params" objects of
    	    arbitrary construction and initializing an A object (i.e., InputExpected)
@@ -135,6 +135,12 @@
    - refactored error catching for JSON file
    - refactored name of constructor for clarity;
    - removed unnecessary local variable for package lang.java;
+   .........................................................................
+   2018-10-01T15:00 version 0.3.4
+   - changed ccName to protected so ParamsExpected can access it;
+   - changed test runner to send result to ParamsExpected class for counting,
+     tallying, and error reporting;
+   - added report at end of test runner;
    -------------------------------------------------------------------------
 */
 
@@ -160,7 +166,7 @@ public class Main {
 
     // these names are used by Reflection code
     private   static String cc;			 // code challenge from command-line
-    private   static String ccName;		 // upper-cased code challenge name
+    protected static String ccName;		 // upper-cased code challenge name
     private   static String ccPackage;		 // package designation based upon cc from command-line
     private   static String ccPackageName;       // fully qualified Code Challenge package name
     protected static String paramsPackageName;   // fully qualified Params package name
@@ -209,6 +215,8 @@ public class Main {
 	    System.exit(0);
 	}
 
+	System.out.println("\nCODE CHALLENGE: Java " + ccName + "\n");
+
 	try { // wrap the Reflection calls
 	    ccClass = Class.forName(Main.ccPackageName);
 	    ccConstr = ccClass.getConstructor(IParams.class);
@@ -220,23 +228,20 @@ public class Main {
 
 		// iterate over the JSON Array of params and expected values
 		while (iterJson.hasNext()) {
-		    /* obtain the corresponding Params and Expected values for next
-		       Code Challenge invocation */
 		    paramsExpected = new ParamsExpected(iterJson.next().getAsJsonObject());
-		    System.out.println(paramsExpected);
 
 		    /* use the Reflection Constructor to instantiate a call to the
 		       code challenge with a new set of parameters; this is the HEART
 		       of the solution. */
 		    icc = (ICC) ccConstr.newInstance(paramsExpected.getParams());
 
-		    System.out.println(ccName + "(" + icc.params() + ") = Result: " + icc.result());
-		    System.out.println("Expected: " + paramsExpected.getExpected());
-		    System.out.println("Result Equals Expected?: " +
-				       icc.result().equals(paramsExpected.getExpected()));
-		    System.out.println();
+		    paramsExpected.reportResult(icc.result());
 		}
 
+		System.out.println("RESULTS:\n========");
+		System.out.println("Tests:\t"  + ParamsExpected.ccCount());
+		System.out.println("OK:\t"     + ParamsExpected.tally());
+		System.out.println("Failed:\t" + (ParamsExpected.ccCount() - ParamsExpected.tally()));
 	    }
 	    catch (JsonIOException jioe) {
 		jioe.printStackTrace();
